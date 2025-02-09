@@ -1,0 +1,13 @@
+.rulerOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 999999;
+  width: 100vw;
+  height: 100vh;
+}
+
+.rulerHighlight {
+  outline: 2px solid aqua;
+}

@@ -47,11 +47,9 @@ const removePaintings = () => {
 
 const paintLines = (x1: number, x2: number, y1: number, y2: number) => {
   const fragment = document.createDocumentFragment();
-  console.log({ x1, x2 });
 
   if (x1 !== x2) {
     const horizontalLineWidth = Math.abs(Math.round(x2 - x1));
-    console.log({ horizontalLineWidth });
 
     const horizontalLine = document.createElement("div");
     horizontalLine.classList.add(styles.line);
@@ -60,22 +58,18 @@ const paintLines = (x1: number, x2: number, y1: number, y2: number) => {
     horizontalLine.style.width = `${horizontalLineWidth}px`;
     fragment.appendChild(horizontalLine);
 
-    const horizontalLineWidthSizeBlock = document.createElement("p");
-    horizontalLineWidthSizeBlock.classList.add(styles.size);
-    horizontalLineWidthSizeBlock.style.top = `${
-      y1 - DIMENSIONS.lineAndSizeGap - DIMENSIONS.lineWidth
-    }px`;
-    horizontalLineWidthSizeBlock.style.left = `${
-      x1 + horizontalLineWidth / 2
-    }px`;
+    const horizontalLineWidthSizeBlock = document.createElement("span");
+    horizontalLineWidthSizeBlock.classList.add(styles.size, styles.horizontal);
+    horizontalLineWidthSizeBlock.style.top = `${y1 - DIMENSIONS.lineAndSizeGap - DIMENSIONS.lineWidth
+      }px`;
+    horizontalLineWidthSizeBlock.style.left = `${x1 + (horizontalLineWidth / 2)
+      }px`;
     horizontalLineWidthSizeBlock.innerHTML = `${horizontalLineWidth}px`;
     fragment.appendChild(horizontalLineWidthSizeBlock);
   }
 
-  console.log({ y1, y2 });
   if (y1 !== y2) {
     const verticalLineHeight = Math.abs(Math.round(y2 - y1));
-    console.log({ verticalLineHeight });
 
     const verticalLine = document.createElement("div");
     verticalLine.classList.add(styles.line);
@@ -85,11 +79,10 @@ const paintLines = (x1: number, x2: number, y1: number, y2: number) => {
     fragment.appendChild(verticalLine);
 
     const verticalLineHeightSizeBlock = document.createElement("span");
-    verticalLineHeightSizeBlock.classList.add(styles.size);
-    verticalLineHeightSizeBlock.style.left = `${
-      x1 + DIMENSIONS.lineAndSizeGap - DIMENSIONS.lineWidth
-    }px`;
-    verticalLineHeightSizeBlock.style.top = `${y1 + verticalLineHeight / 2}px`;
+    verticalLineHeightSizeBlock.classList.add(styles.size, styles.vertical);
+    verticalLineHeightSizeBlock.style.left = `${x1 - DIMENSIONS.lineAndSizeGap - DIMENSIONS.lineWidth
+      }px`;
+    verticalLineHeightSizeBlock.style.top = `${y1 + (verticalLineHeight / 2)}px`;
     verticalLineHeightSizeBlock.innerHTML = `${verticalLineHeight}px`;
     fragment.appendChild(verticalLineHeightSizeBlock);
   }
@@ -116,26 +109,26 @@ const initRuler = (anchorElement: HTMLElement, targetElement: HTMLElement) => {
   const hasHorizontalSpace = anchorX + anchorWidth !== targetX + targetWidth;
   const hasVerticalSpace = anchorY + anchorHeight !== targetY + targetHeight;
 
-  const isTargetFromRight = anchorX < targetX;
+  const isTargetFromRight = targetX + targetWidth > anchorX + anchorWidth;
   const leftElement = isTargetFromRight ? anchorElement : targetElement;
   const { left: leftElementX, width: leftElementWidth } =
     leftElement.getBoundingClientRect();
 
   const rightElement = isTargetFromRight ? targetElement : anchorElement;
-  const { left: rightElementX } = rightElement.getBoundingClientRect();
+  const { left: rightElementX, width: rightElementWidth } = rightElement.getBoundingClientRect();
 
-  const isTargetFromTop = anchorY > targetY;
+  const isTargetFromTop = anchorY + anchorHeight > targetY + targetHeight;
   const topElement = isTargetFromTop ? targetElement : anchorElement;
   const { top: topElementY, height: topElementWidth } =
     topElement.getBoundingClientRect();
 
   const bottomElement = isTargetFromTop ? anchorElement : targetElement;
-  const { top: bottomElementY } = bottomElement.getBoundingClientRect();
+  const { top: bottomElementY, height: bottomElementHeight } = bottomElement.getBoundingClientRect();
 
   const x1 = leftElementX + leftElementWidth;
-  const x2 = rightElementX;
+  const x2 = x1 > rightElementX ? rightElementX + rightElementWidth : rightElementX;
   const y1 = topElementY + topElementWidth;
-  const y2 = bottomElementY;
+  const y2 = y1 > bottomElementY ? bottomElementY + bottomElementHeight : bottomElementY;
 
   paintLines(
     hasHorizontalSpace ? x1 : 0,
@@ -178,7 +171,6 @@ const mouseOverAnchorElementHandler = (event: MouseEvent) => {
 
   unHighlightElement(state.targetElement!);
   state.targetElement = null;
-  removePaintings();
 
   const element = event.target as HTMLElement;
   state.anchorElement = element;

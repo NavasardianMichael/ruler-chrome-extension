@@ -5,20 +5,10 @@
 
 .highlighted {
   outline: 1px dashed var(--highlight-color);
-  /* & * {
-    pointer-events: none;
-    user-select: none;
-    cursor: default;
-  } */
 }
 
 .pinned {
   outline: 1px solid var(--highlight-color);
-
-  /* & * {
-    pointer-events: none;
-    user-select: none;
-  } */
 }
 
 .line {
@@ -35,5 +25,12 @@
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-size: 12px;
   color: var(--line-color);
-  transform: translate(-100%, -100%);
+
+  &.horizontal {
+    transform: translate(-50%, -100%);
+  }
+
+  &.vertical {
+    transform: translate(-100%, -50%);
+  }
 }

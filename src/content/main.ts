@@ -33,16 +33,16 @@ const unPinElement = (element: HTMLElement) => {
 };
 
 const removePaintings = () => {
-  Array.from(document.querySelectorAll(`.${styles.line}`)).forEach(
-    (lineElement) => {
-      lineElement.remove();
-    }
-  );
-  Array.from(document.querySelectorAll(`.${styles.size}`)).forEach(
-    (lineElement) => {
-      lineElement.remove();
-    }
-  );
+  // Array.from(document.querySelectorAll(`.${styles.line}`)).forEach(
+  //   (lineElement) => {
+  //     lineElement.remove();
+  //   }
+  // );
+  // Array.from(document.querySelectorAll(`.${styles.size}`)).forEach(
+  //   (lineElement) => {
+  //     lineElement.remove();
+  //   }
+  // );
 };
 
 const paintLines = (x1: number, x2: number, y1: number, y2: number) => {
@@ -60,10 +60,12 @@ const paintLines = (x1: number, x2: number, y1: number, y2: number) => {
 
     const horizontalLineWidthSizeBlock = document.createElement("span");
     horizontalLineWidthSizeBlock.classList.add(styles.size, styles.horizontal);
-    horizontalLineWidthSizeBlock.style.top = `${y1 - DIMENSIONS.lineAndSizeGap - DIMENSIONS.lineWidth
-      }px`;
-    horizontalLineWidthSizeBlock.style.left = `${x1 + (horizontalLineWidth / 2)
-      }px`;
+    horizontalLineWidthSizeBlock.style.top = `${
+      y1 - DIMENSIONS.lineAndSizeGap - DIMENSIONS.lineWidth
+    }px`;
+    horizontalLineWidthSizeBlock.style.left = `${
+      x1 + horizontalLineWidth / 2
+    }px`;
     horizontalLineWidthSizeBlock.innerHTML = `${horizontalLineWidth}px`;
     fragment.appendChild(horizontalLineWidthSizeBlock);
   }
@@ -80,9 +82,10 @@ const paintLines = (x1: number, x2: number, y1: number, y2: number) => {
 
     const verticalLineHeightSizeBlock = document.createElement("span");
     verticalLineHeightSizeBlock.classList.add(styles.size, styles.vertical);
-    verticalLineHeightSizeBlock.style.left = `${x1 - DIMENSIONS.lineAndSizeGap - DIMENSIONS.lineWidth
-      }px`;
-    verticalLineHeightSizeBlock.style.top = `${y1 + (verticalLineHeight / 2)}px`;
+    verticalLineHeightSizeBlock.style.left = `${
+      x1 - DIMENSIONS.lineAndSizeGap - DIMENSIONS.lineWidth
+    }px`;
+    verticalLineHeightSizeBlock.style.top = `${y1 + verticalLineHeight / 2}px`;
     verticalLineHeightSizeBlock.innerHTML = `${verticalLineHeight}px`;
     fragment.appendChild(verticalLineHeightSizeBlock);
   }
@@ -115,7 +118,8 @@ const initRuler = (anchorElement: HTMLElement, targetElement: HTMLElement) => {
     leftElement.getBoundingClientRect();
 
   const rightElement = isTargetFromRight ? targetElement : anchorElement;
-  const { left: rightElementX, width: rightElementWidth } = rightElement.getBoundingClientRect();
+  const { left: rightElementX, width: rightElementWidth } =
+    rightElement.getBoundingClientRect();
 
   const isTargetFromTop = anchorY + anchorHeight > targetY + targetHeight;
   const topElement = isTargetFromTop ? targetElement : anchorElement;
@@ -123,12 +127,15 @@ const initRuler = (anchorElement: HTMLElement, targetElement: HTMLElement) => {
     topElement.getBoundingClientRect();
 
   const bottomElement = isTargetFromTop ? anchorElement : targetElement;
-  const { top: bottomElementY, height: bottomElementHeight } = bottomElement.getBoundingClientRect();
+  const { top: bottomElementY, height: bottomElementHeight } =
+    bottomElement.getBoundingClientRect();
 
   const x1 = leftElementX + leftElementWidth;
-  const x2 = x1 > rightElementX ? rightElementX + rightElementWidth : rightElementX;
+  const x2 =
+    x1 > rightElementX ? rightElementX + rightElementWidth : rightElementX;
   const y1 = topElementY + topElementWidth;
-  const y2 = y1 > bottomElementY ? bottomElementY + bottomElementHeight : bottomElementY;
+  const y2 =
+    y1 > bottomElementY ? bottomElementY + bottomElementHeight : bottomElementY;
 
   paintLines(
     hasHorizontalSpace ? x1 : 0,

@@ -7,13 +7,13 @@ function initReactApp() {
   container.id = "ruler-extension-root";
 
   // 2. Optionally, use a shadow DOM to avoid conflicts with site styles
-  const shadow = container.attachShadow({ mode: "open" });
+  // const shadow = container.attachShadow({ mode: 'open' })
 
   // 3. Append to body (or somewhere else on the page)
   document.body.appendChild(container);
 
   // 4. Create and render your React app
-  const root = createRoot(shadow);
+  const root = createRoot(container /* or shadow */);
   root.render(<Ruler />);
 }
 

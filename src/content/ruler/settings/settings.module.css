@@ -1,0 +1,33 @@
+.settings {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ruler-extension-css-vars-space-md);
+  padding: var(--ruler-extension-css-vars-space-sm)
+    var(--ruler-extension-css-vars-space-lg)
+    var(--ruler-extension-css-vars-space-lg)
+    var(--ruler-extension-css-vars-space-lg);
+
+  .unitsSelection {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ruler-extension-css-vars-space-md);
+
+    .unitSelection {
+      display: flex;
+      flex-direction: column;
+      gap: var(--ruler-extension-css-vars-space-sm);
+
+      .unitTypeSelection,
+      .unitStepSelection {
+        display: flex;
+        flex-direction: column;
+        gap: var(--ruler-extension-css-vars-space-xs);
+
+        .unitFields {
+          display: flex;
+          gap: var(--ruler-extension-css-vars-space-xs);
+        }
+      }
+    }
+  }
+}

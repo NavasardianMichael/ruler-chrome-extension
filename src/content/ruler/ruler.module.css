@@ -1,0 +1,15 @@
+@import "../_shared/styles/variables.css";
+
+#ruler-extension-root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+
+.ruler {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  background-color: yellow;
+  border: 1px solid black;
+}

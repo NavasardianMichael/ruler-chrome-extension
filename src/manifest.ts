@@ -12,16 +12,16 @@ const manifest: ManifestV3Export = {
         128: "src/_shared/icons/ruler128.png",
     },
     background: {
-        service_worker: 'src/background/main.ts',
+        service_worker: 'src/background/background.ts',
     },
     content_scripts: [
         {
             matches: ["<all_urls>"],
-            js: ['src/content/main.ts'],
+            js: ['src/content/content.tsx'],
         },
     ],
     action: {
-        default_popup: 'src/popup/index.html',
+        default_popup: 'src/popup/popup.html',
         default_icon: "src/_shared/icons/ruler.png",
         default_title: "Ruler Extension"
     },

@@ -1,0 +1,6 @@
+:root {
+  --ruler-extension-css-vars-space-xs: 0.5rem;
+  --ruler-extension-css-vars-space-sm: 0.75rem;
+  --ruler-extension-css-vars-space-md: 1rem;
+  --ruler-extension-css-vars-space-lg: 1.25rem;
+}

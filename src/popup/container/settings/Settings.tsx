@@ -1,58 +1,52 @@
-import { ChangeEventHandler, useState } from "react";
+import { ChangeEventHandler, useState } from 'react'
 import {
+  COLORS_SELECTIONS_TEMPLATES,
   SETTINGS_FORM_INITIAL_VALUES,
-  UNIT_STEP_FIELD_NAMES,
-  UNIT_TYPE_SELECTION_TEMPLATE,
-  UNIT_TYPES_SELECTIONS_TEMPLATES,
   UNITS_TYPES_PROPS,
-} from "./constants";
-import styles from "./settings.module.css";
-import { UnitType, UnitTypeFieldName } from "./types";
+  UNIT_STEP_FIELD_NAMES,
+  UNIT_TYPES_SELECTIONS_TEMPLATES,
+  UNIT_TYPE_SELECTION_TEMPLATE,
+} from '_shared/constants/settings'
+import { useSyncWithStorage } from '_shared/hooks/useSyncWithStorage'
+import { UnitType, UnitTypeFieldName } from '_shared/types/settings'
+import styles from './settings.module.css'
 
 export const Settings = () => {
-  const [settings, setSettings] = useState(SETTINGS_FORM_INITIAL_VALUES);
+  const [settings, setSettings] = useState(SETTINGS_FORM_INITIAL_VALUES)
 
-  const handleUnitTypeChange: ChangeEventHandler<HTMLSelectElement> = (
-    event
-  ) => {
-    const name = event.target.name as UnitTypeFieldName;
-    const value = event.target.value as UnitType;
+  useSyncWithStorage({ settings })
+
+  const handleUnitTypeChange: ChangeEventHandler<HTMLSelectElement> = (event) => {
+    const name = event.target.name as UnitTypeFieldName
+    const value = event.target.value as UnitType
     setSettings((prev) => {
       const result = {
         ...prev,
         [name]: value,
-      };
-      if (
-        prev[UNIT_STEP_FIELD_NAMES.primaryUnitStep] <
-          UNITS_TYPES_PROPS.byType[value].minStep ||
-        prev[UNIT_STEP_FIELD_NAMES.primaryUnitStep] >
-          UNITS_TYPES_PROPS.byType[value].maxStep
-      ) {
-        result[UNIT_STEP_FIELD_NAMES.primaryUnitStep] =
-          UNITS_TYPES_PROPS.byType[value].minStep;
       }
       if (
-        prev[UNIT_STEP_FIELD_NAMES.secondaryUnitStep] <
-          UNITS_TYPES_PROPS.byType[value].minStep ||
-        prev[UNIT_STEP_FIELD_NAMES.secondaryUnitStep] >
-          UNITS_TYPES_PROPS.byType[value].maxStep
+        prev[UNIT_STEP_FIELD_NAMES.primaryUnitStep] < UNITS_TYPES_PROPS.byType[value].minStep ||
+        prev[UNIT_STEP_FIELD_NAMES.primaryUnitStep] > UNITS_TYPES_PROPS.byType[value].maxStep
       ) {
-        result[UNIT_STEP_FIELD_NAMES.secondaryUnitStep] =
-          UNITS_TYPES_PROPS.byType[value].minStep;
+        result[UNIT_STEP_FIELD_NAMES.primaryUnitStep] = UNITS_TYPES_PROPS.byType[value].minStep
       }
-      return result;
-    });
-  };
+      if (
+        prev[UNIT_STEP_FIELD_NAMES.secondaryUnitStep] < UNITS_TYPES_PROPS.byType[value].minStep ||
+        prev[UNIT_STEP_FIELD_NAMES.secondaryUnitStep] > UNITS_TYPES_PROPS.byType[value].maxStep
+      ) {
+        result[UNIT_STEP_FIELD_NAMES.secondaryUnitStep] = UNITS_TYPES_PROPS.byType[value].minStep
+      }
+      return result
+    })
+  }
 
-  const handleUnitStepChange: ChangeEventHandler<HTMLInputElement> = (
-    event
-  ) => {
-    const { name, value } = event.target;
+  const handleInputChange: ChangeEventHandler<HTMLInputElement> = (event) => {
+    const { name, value } = event.target
     setSettings((prev) => ({
       ...prev,
       [name]: value,
-    }));
-  };
+    }))
+  }
 
   return (
     <main className={styles.settings}>
@@ -61,9 +55,7 @@ export const Settings = () => {
           return (
             <div className={styles.unitSelection}>
               <div className={styles.unitTypeSelection}>
-                <label htmlFor={unitTypeTemplate.unitType.fieldName}>
-                  {unitTypeTemplate.unitType.label}
-                </label>
+                <label htmlFor={unitTypeTemplate.unitType.fieldName}>{unitTypeTemplate.unitType.label}</label>
                 <select
                   id={unitTypeTemplate.unitType.fieldName}
                   name={unitTypeTemplate.unitType.fieldName}
@@ -75,70 +67,52 @@ export const Settings = () => {
                       <option key={unit.value} value={unit.value}>
                         {unit.label}
                       </option>
-                    );
+                    )
                   })}
                 </select>
               </div>
               <div className={styles.unitStepSelection}>
-                <label htmlFor={unitTypeTemplate.unitStep.fieldName}>
-                  {unitTypeTemplate.unitStep.label}
-                </label>
+                <label htmlFor={unitTypeTemplate.unitStep.fieldName}>{unitTypeTemplate.unitStep.label}</label>
                 <div className={styles.unitFields}>
                   <input
                     type="range"
                     name={unitTypeTemplate.unitStep.fieldName}
                     value={settings[unitTypeTemplate.unitStep.fieldName]}
-                    onChange={handleUnitStepChange}
-                    min={
-                      UNITS_TYPES_PROPS.byType[
-                        settings[unitTypeTemplate.unitType.fieldName]
-                      ].minStep
-                    }
-                    max={
-                      UNITS_TYPES_PROPS.byType[
-                        settings[unitTypeTemplate.unitType.fieldName]
-                      ].maxStep
-                    }
+                    onChange={handleInputChange}
+                    min={UNITS_TYPES_PROPS.byType[settings[unitTypeTemplate.unitType.fieldName]].minStep}
+                    max={UNITS_TYPES_PROPS.byType[settings[unitTypeTemplate.unitType.fieldName]].maxStep}
                   />
                   <input
                     type="number"
                     id={unitTypeTemplate.unitStep.fieldName}
                     name={unitTypeTemplate.unitStep.fieldName}
                     value={settings[unitTypeTemplate.unitStep.fieldName]}
-                    onChange={handleUnitStepChange}
-                    min={
-                      UNITS_TYPES_PROPS.byType[
-                        settings[unitTypeTemplate.unitType.fieldName]
-                      ].minStep
-                    }
-                    max={
-                      UNITS_TYPES_PROPS.byType[
-                        settings[unitTypeTemplate.unitType.fieldName]
-                      ].maxStep
-                    }
+                    onChange={handleInputChange}
+                    min={UNITS_TYPES_PROPS.byType[settings[unitTypeTemplate.unitType.fieldName]].minStep}
+                    max={UNITS_TYPES_PROPS.byType[settings[unitTypeTemplate.unitType.fieldName]].maxStep}
                   />
                 </div>
               </div>
             </div>
-          );
+          )
         })}
       </div>
-
-      <div></div>
-
-      {/* <div className={styles.rulerMode}>
-        <label htmlFor="mode-option">Select Ruler Mode</label>
-        <div id="mode-option" className={styles.radioGroup}>
-          <input type="radio" id="static-ruler" name="ruler-mode" />
-          <label htmlFor="static-ruler">Static Ruler</label>
-        </div>
-        <div className={styles.radioGroup}>
-          <input type="radio" id="dynamic-ruler" name="ruler-mode" />
-          <label htmlFor="dynamic-ruler">
-            Dynamic Ruler (Distance Measurer)
-          </label>
-        </div>
-      </div> */}
+      <div className={styles.colorsSelection}>
+        {COLORS_SELECTIONS_TEMPLATES.map((colorTemplate) => {
+          return (
+            <div className={styles.colorSelection}>
+              <label htmlFor={colorTemplate.name}>{colorTemplate.label}</label>
+              <input
+                type="color"
+                id={colorTemplate.name}
+                name={colorTemplate.name}
+                value={settings[colorTemplate.name]}
+                onChange={handleInputChange}
+              />
+            </div>
+          )
+        })}
+      </div>
     </main>
-  );
-};
+  )
+}

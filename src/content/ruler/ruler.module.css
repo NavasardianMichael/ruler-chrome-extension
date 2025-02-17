@@ -1,4 +1,4 @@
-@import "../../_shared/styles/variables.css";
+@import '../../_shared/styles/variables.css';
 
 .ruler {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -7,9 +7,18 @@
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 9999;
-  width: 300px;
-  height: 100px;
-  background-color: yellow;
-  border: 1px solid black;
+  border-style: solid;
+  border-width: 1px;
   padding: var(--ruler-extension-css-vars-space-sm);
+  border-radius: var(--ruler-extension-css-vars-space-xs);
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--ruler-extension-css-vars-space-sm);
+
+  resize: both;
+
+  .secondaryAxis {
+    margin-top: auto;
+  }
 }

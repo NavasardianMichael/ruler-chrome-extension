@@ -1,4 +1,4 @@
-import { CSSProperties, useEffect, useMemo, useRef, useState } from 'react'
+import { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   COLOR_FIELD_NAMES,
   SETTINGS_FORM_INITIAL_VALUES,
@@ -8,11 +8,10 @@ import {
 import { UI_INITIAL_VALUES } from '_shared/constants/ui'
 import { getStorageValue } from '_shared/functions/chromeStorage'
 import { combineClassNames } from '_shared/functions/commons'
-// import MoveIcon from '_shared/icons/move.svg'
 import { useSyncLocalStateToChromeStorage } from '_shared/hooks/useSyncLocalStateToChromeStorage'
 import { SettingsState } from '_shared/types/settings'
 import { UIState } from '_shared/types/ui'
-import { useDragging } from './useDragging'
+import { Draggable } from '../draggable/Draggable'
 import styles from './ruler.module.css'
 
 export const Ruler = () => {
@@ -20,51 +19,68 @@ export const Ruler = () => {
   const [ui, setUI] = useState(UI_INITIAL_VALUES)
   const [isSyncedWithChromeStorage, setIsSyncedWithChromeStorage] = useState(false)
 
-  const { position, handleMouseDown, handleMouseUp } = useDragging({ initialX: ui.left, initialY: ui.top })
-
   const rulerElementRef = useRef<HTMLDivElement>(null)
   const resizeTimeoutRef = useRef<NodeJS.Timeout>(null)
 
-  const setUIProps = (newProps: Partial<typeof ui>) => {
-    setUI((prev) => ({
-      ...prev,
-      ...newProps,
-    }))
-  }
+  const setUIProps = useCallback((newProps: Partial<typeof ui>) => {
+    setUI((prev) => {
+      const newState = {
+        ...prev,
+        ...newProps,
+      }
+      if (JSON.stringify(newState) === JSON.stringify(prev)) return prev
+      return newState
+    })
+  }, [])
 
   useEffect(() => {
     const syncChromeStorageToLocalState = async () => {
       const settingsFromStorage = await getStorageValue<SettingsState>('settings')
       const uiFromStorage = await getStorageValue<UIState>('ui')
-      setSettings(settingsFromStorage)
-      setUI(uiFromStorage)
+      setSettings({ ...SETTINGS_FORM_INITIAL_VALUES, ...settingsFromStorage })
+      setUI({ ...UI_INITIAL_VALUES, ...uiFromStorage })
       setIsSyncedWithChromeStorage(true)
     }
     syncChromeStorageToLocalState()
   }, [])
 
-  useSyncLocalStateToChromeStorage({ settings, ui })
+  const state = useMemo(
+    () => ({
+      settings,
+      ui,
+    }),
+    [settings, ui]
+  )
+  useSyncLocalStateToChromeStorage(state)
 
   useEffect(() => {
     const observer = new ResizeObserver((entries) => {
+      if (!isSyncedWithChromeStorage) return
       for (const entry of entries) {
-        const { width, height } = entry.contentRect
-        console.log({ height, width })
+        const { width, height } = entry.target.getBoundingClientRect()
 
         if (resizeTimeoutRef.current) {
           clearTimeout(resizeTimeoutRef.current)
         }
         resizeTimeoutRef.current = setTimeout(() => {
           if (!height || !width) return
-          setUIProps({
-            height,
-            width,
+          console.log({
+            height: Math.floor(height),
+            width: Math.floor(width),
           })
-        }, 200)
+          setUIProps({
+            height: Math.floor(height),
+            width: Math.floor(width),
+          })
+        }, 100)
       }
     })
     observer.observe(rulerElementRef.current as HTMLDivElement)
-  }, [])
+
+    return () => {
+      observer?.disconnect()
+    }
+  }, [isSyncedWithChromeStorage, setUIProps])
 
   useEffect(() => {
     if (!chrome.storage) return
@@ -86,7 +102,7 @@ export const Ruler = () => {
       color,
       borderColor: settings[COLOR_FIELD_NAMES.color],
     }
-  }, [settings])
+  }, [settings, ui.height, ui.width])
 
   const primaryAxisStyle: CSSProperties = useMemo(() => {
     const color = settings[COLOR_FIELD_NAMES.color]
@@ -107,24 +123,22 @@ export const Ruler = () => {
   }, [settings])
 
   return (
-    <div className={styles.container} style={{ left: position.x, top: position.y }}>
-      <div
-        ref={rulerElementRef}
-        className={combineClassNames(styles.ruler, !isSyncedWithChromeStorage && styles.hidden)}
-        style={rulerStyle}
-      >
-        <div className={combineClassNames(styles.axis, styles.primary)} style={primaryAxisStyle}>
-          {/* Primary Axis */}
-        </div>
+    <Draggable>
+      <div className={styles.container} hidden={!isSyncedWithChromeStorage}>
+        <div
+          ref={rulerElementRef}
+          className={combineClassNames(styles.ruler, !isSyncedWithChromeStorage && styles.hidden)}
+          style={rulerStyle}
+        >
+          <div className={combineClassNames(styles.axis, styles.primary)} style={primaryAxisStyle}>
+            {/* Primary Axis */}
+          </div>
 
-        <div className={combineClassNames(styles.axis, styles.secondary)} style={secondaryAxisStyle}>
-          {/* Secondary Axis */}
+          <div className={combineClassNames(styles.axis, styles.secondary)} style={secondaryAxisStyle}>
+            {/* Secondary Axis */}
+          </div>
         </div>
       </div>
-      <button className={styles.dragAnchor} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}>
-        {/* <MoveIcon /> */}
-        drag
-      </button>
-    </div>
+    </Draggable>
   )
 }

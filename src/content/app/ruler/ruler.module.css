@@ -1,0 +1,48 @@
+@import '../../../_shared/styles/variables.css';
+
+.container {
+  position: fixed;
+  z-index: 9999;
+
+  &:hover {
+    box-shadow: lightgray 0px 0px 31px;
+  }
+
+  .dragAnchor {
+    opacity: 0;
+    cursor: move;
+    transition: 0.1s;
+  }
+
+  &:hover .dragAnchor {
+    opacity: 1;
+  }
+
+  .ruler {
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--ruler-extension-css-vars-space-sm);
+
+    border-style: solid;
+    border-width: 1px;
+    border-radius: var(--ruler-extension-css-vars-space-xs);
+
+    resize: both;
+    overflow: auto;
+    transition: box-shadow 0.1s;
+
+    &.hidden {
+      display: none;
+    }
+
+    .axis {
+      height: 40%;
+
+      &.secondary {
+        margin-top: auto;
+      }
+    }
+  }
+}

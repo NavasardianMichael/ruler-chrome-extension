@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "types": ["node", "@types/chrome"],
     "baseUrl": "src",
     "jsx": "react-jsx",
     "target": "ES2020",

@@ -14,6 +14,7 @@
     "@crxjs/vite-plugin": "2.0.0-beta.31",
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
     "@types/chrome": "^0.0.304",
+    "@types/node": "^22.13.4",
     "@types/react": "^19.0.9",
     "@types/react-dom": "^19.0.3",
     "@vitejs/plugin-react": "^4.3.4",

@@ -1,6 +1,5 @@
 import { createRoot } from 'react-dom/client'
-import { Ruler } from './ruler/Ruler'
-import './content.module.css'
+import { App } from './app/App'
 
 function initReactApp() {
   // 1. Create a container in the DOM
@@ -15,7 +14,7 @@ function initReactApp() {
 
   // 4. Create and render your React app
   const root = createRoot(container /* or shadow */)
-  root.render(<Ruler />)
+  root.render(<App />)
 }
 
 // Run the function once the page is ready (or immediately if you don't need to wait)

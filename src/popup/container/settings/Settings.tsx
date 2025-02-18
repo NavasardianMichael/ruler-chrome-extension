@@ -7,14 +7,14 @@ import {
   UNIT_TYPES_SELECTIONS_TEMPLATES,
   UNIT_TYPE_SELECTION_TEMPLATE,
 } from '_shared/constants/settings'
-import { useSyncWithStorage } from '_shared/hooks/useSyncWithStorage'
+import { useSyncLocalStateToChromeStorage } from '_shared/hooks/useSyncLocalStateToChromeStorage'
 import { UnitType, UnitTypeFieldName } from '_shared/types/settings'
 import styles from './settings.module.css'
 
 export const Settings = () => {
   const [settings, setSettings] = useState(SETTINGS_FORM_INITIAL_VALUES)
 
-  useSyncWithStorage({ settings })
+  useSyncLocalStateToChromeStorage({ settings })
 
   const handleUnitTypeChange: ChangeEventHandler<HTMLSelectElement> = (event) => {
     const name = event.target.name as UnitTypeFieldName

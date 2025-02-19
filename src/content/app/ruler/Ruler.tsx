@@ -65,14 +65,14 @@ export const Ruler = () => {
         resizeTimeoutRef.current = setTimeout(() => {
           if (!height || !width) return
           console.log({
-            height: Math.floor(height),
-            width: Math.floor(width),
+            height: Math.round(height),
+            width: Math.round(width),
           })
           setUIProps({
-            height: Math.floor(height),
-            width: Math.floor(width),
+            height: Math.round(height),
+            width: Math.round(width),
           })
-        }, 100)
+        }, 0)
       }
     })
     observer.observe(rulerElementRef.current as HTMLDivElement)
@@ -130,13 +130,14 @@ export const Ruler = () => {
           className={combineClassNames(styles.ruler, !isSyncedWithChromeStorage && styles.hidden)}
           style={rulerStyle}
         >
-          <div className={combineClassNames(styles.axis, styles.primary)} style={primaryAxisStyle}>
-            {/* Primary Axis */}
+          <div className={combineClassNames(styles.axis, styles.primary)} style={primaryAxisStyle}></div>
+          <div className={combineClassNames(styles.steps)}>
+            {/* {
+              settings.
+            } */}
           </div>
 
-          <div className={combineClassNames(styles.axis, styles.secondary)} style={secondaryAxisStyle}>
-            {/* Secondary Axis */}
-          </div>
+          <div className={combineClassNames(styles.axis, styles.secondary)} style={secondaryAxisStyle}></div>
         </div>
       </div>
     </Draggable>

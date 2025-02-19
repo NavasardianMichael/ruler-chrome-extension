@@ -24,11 +24,11 @@
 
     resize: both;
     overflow: auto;
-    transition: 0.1s;
+    transition: box-shadow 0.1s;
 
     .axis {
       height: 40%;
-      /* transform: translateX(var(--ruler-extension-css-vars-space-md)); */
+      max-height: 50px;
 
       &.secondary {
         margin-top: auto;

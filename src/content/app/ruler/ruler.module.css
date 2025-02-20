@@ -32,13 +32,12 @@
       margin-left: var(--ruler-extension-css-vars-space-lg);
     }
 
+    .presentational {
+      flex-grow: 1;
+    }
     .axis {
       height: 40%;
       max-height: 50px;
-
-      &.secondary {
-        margin-top: auto;
-      }
     }
 
     .steps {

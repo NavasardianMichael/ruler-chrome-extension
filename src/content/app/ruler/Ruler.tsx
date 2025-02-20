@@ -159,6 +159,8 @@ export const Ruler = () => {
             })}
           </div>
 
+          <h1 className={styles.presentational}>@Michael</h1>
+
           <div className={combineClassNames(styles.axis, styles.secondary)} style={secondaryAxisStyle}></div>
         </div>
       </div>

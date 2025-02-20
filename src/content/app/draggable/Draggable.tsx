@@ -45,8 +45,8 @@ export const Draggable: FC<DraggableContainerProps> = ({ children, initialX = 10
     }
     setIsDragging(true)
     dragOffset.current = {
-      x: Math.floor(e.clientX - position.x),
-      y: Math.floor(e.clientY - position.y),
+      x: e.clientX - position.x,
+      y: e.clientY - position.y,
     }
   }
 
@@ -59,8 +59,8 @@ export const Draggable: FC<DraggableContainerProps> = ({ children, initialX = 10
   const debouncedMouseMove = useMemo(() => {
     const fn = (e: MouseEvent) => {
       setPosition({
-        x: Math.floor(e.clientX - dragOffset.current.x),
-        y: Math.floor(e.clientY - dragOffset.current.y),
+        x: e.clientX - dragOffset.current.x,
+        y: e.clientY - dragOffset.current.y,
       })
     }
     return debounce(fn as () => unknown, 0) // Adjust debounce delay (in ms) as needed

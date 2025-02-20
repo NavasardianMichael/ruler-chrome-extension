@@ -2,6 +2,7 @@ import { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from
 import {
   COLOR_FIELD_NAMES,
   SETTINGS_FORM_INITIAL_VALUES,
+  UNIT_CONVERSION_FACTORS_BY_PX,
   UNIT_STEP_FIELD_NAMES,
   UNIT_TYPE_FIELD_NAMES,
 } from '_shared/constants/settings'
@@ -20,7 +21,6 @@ export const Ruler = () => {
   const [isSyncedWithChromeStorage, setIsSyncedWithChromeStorage] = useState(false)
 
   const rulerElementRef = useRef<HTMLDivElement>(null)
-  const resizeTimeoutRef = useRef<NodeJS.Timeout>(null)
 
   const setUIProps = useCallback((newProps: Partial<typeof ui>) => {
     setUI((prev) => {
@@ -58,21 +58,19 @@ export const Ruler = () => {
       if (!isSyncedWithChromeStorage) return
       for (const entry of entries) {
         const { width, height } = entry.target.getBoundingClientRect()
+        console.log({ width, height })
 
-        if (resizeTimeoutRef.current) {
-          clearTimeout(resizeTimeoutRef.current)
-        }
-        resizeTimeoutRef.current = setTimeout(() => {
+        queueMicrotask(() => {
           if (!height || !width) return
           console.log({
-            height: Math.round(height),
-            width: Math.round(width),
+            height: height,
+            width: width,
           })
           setUIProps({
-            height: Math.round(height),
-            width: Math.round(width),
+            height: height,
+            width: width,
           })
-        }, 0)
+        })
       }
     })
     observer.observe(rulerElementRef.current as HTMLDivElement)
@@ -95,6 +93,11 @@ export const Ruler = () => {
 
   const rulerStyle: CSSProperties = useMemo(() => {
     const color = settings[COLOR_FIELD_NAMES.color]
+    console.log({
+      width: ui.width,
+      height: ui.height,
+    })
+
     return {
       width: ui.width,
       height: ui.height,
@@ -122,6 +125,14 @@ export const Ruler = () => {
     }
   }, [settings])
 
+  const primaryUnitStepsToPaint = useMemo(() => {
+    const stepsCount = Math.ceil(
+      ui.width / UNIT_CONVERSION_FACTORS_BY_PX[settings.primaryUnit] / settings.primaryUnitStep
+    )
+    const steps = new Array(stepsCount).fill(undefined).map((_, i) => i++)
+    return steps
+  }, [settings.primaryUnit, settings.primaryUnitStep, ui.width])
+
   return (
     <Draggable>
       <div className={styles.container} hidden={!isSyncedWithChromeStorage}>
@@ -131,10 +142,21 @@ export const Ruler = () => {
           style={rulerStyle}
         >
           <div className={combineClassNames(styles.axis, styles.primary)} style={primaryAxisStyle}></div>
-          <div className={combineClassNames(styles.steps)}>
-            {/* {
-              settings.
-            } */}
+          <div
+            className={combineClassNames(styles.steps)}
+            style={{ gap: `calc(${settings.primaryUnitStep}${settings.primaryUnit} - 1px)` }}
+          >
+            {primaryUnitStepsToPaint.map((stepNumber) => {
+              return (
+                <span
+                  key={stepNumber}
+                  className={styles.step}
+                  // style={index ? { marginLeft: `calc(${settings.primaryUnitStep}${settings.primaryUnit} - 1px)` } : {}}
+                >
+                  {stepNumber}
+                </span>
+              )
+            })}
           </div>
 
           <div className={combineClassNames(styles.axis, styles.secondary)} style={secondaryAxisStyle}></div>

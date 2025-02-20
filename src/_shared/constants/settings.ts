@@ -1,4 +1,4 @@
-import { SettingsState } from '_shared/types/settings'
+import { SettingsState, UnitType } from '_shared/types/settings'
 
 export const UNIT_TYPES = {
   mm: 'mm',
@@ -7,6 +7,14 @@ export const UNIT_TYPES = {
   pt: 'pt',
   px: 'px',
 } as const
+
+export const UNIT_CONVERSION_FACTORS_BY_PX: Record<UnitType, number> = {
+  mm: 96 / 25.4, // Base unit
+  cm: (96 / 25.4) * 10, // 1 cm = 10 mm
+  in: 96, // 1 inch = 25.4 mm
+  pt: 96 / 72, // 1 point = 0.3528 mm
+  px: 1, // 1 pixel ≈ 0.2646 mm (based on 96 DPI)
+}
 
 export const UNITS_TYPES_PROPS = {
   byType: {
@@ -49,17 +57,17 @@ export const UNIT_TYPE_SELECTION_TEMPLATE = UNITS_TYPES_PROPS.allTypes.map(
 )
 
 export const UNIT_TYPE_FIELD_NAMES = {
-  primaryUnit: 'primary-unit',
-  secondaryUnit: 'secondary-unit',
+  primaryUnit: 'primaryUnit',
+  secondaryUnit: 'secondaryUnit',
 } as const
 
 export const UNIT_STEP_FIELD_NAMES = {
-  primaryUnitStep: 'primary-unit-step',
-  secondaryUnitStep: 'secondary-unit-step',
+  primaryUnitStep: 'primaryUnitStep',
+  secondaryUnitStep: 'secondaryUnitStep',
 } as const
 
 export const COLOR_FIELD_NAMES = {
-  background: 'background-color',
+  background: 'backgroundColor',
   color: 'color',
 } as const
 

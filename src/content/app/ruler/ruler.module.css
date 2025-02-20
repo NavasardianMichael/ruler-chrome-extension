@@ -10,7 +10,7 @@
   }
 
   &:hover {
-    box-shadow: lightgray 0px 0px 31px;
+    box-shadow: lightgray 0px 0px 20px;
   }
 
   .ruler {
@@ -18,13 +18,19 @@
     flex-direction: column;
     gap: var(--ruler-extension-css-vars-space-sm);
 
-    border-style: solid;
-    border-width: 1px;
+    outline-style: solid;
+    outline-width: 1px;
     border-radius: var(--ruler-extension-css-vars-space-xs);
+    box-sizing: border-box;
 
     resize: both;
     overflow: auto;
     transition: box-shadow 0.1s;
+
+    .axis,
+    .steps {
+      margin-left: var(--ruler-extension-css-vars-space-lg);
+    }
 
     .axis {
       height: 40%;
@@ -32,6 +38,14 @@
 
       &.secondary {
         margin-top: auto;
+      }
+    }
+
+    .steps {
+      display: flex;
+
+      .step {
+        transform: translateX(-50%);
       }
     }
   }

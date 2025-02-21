@@ -92,23 +92,17 @@ export const Ruler = () => {
   }, [])
 
   const rulerStyle: CSSProperties = useMemo(() => {
-    const color = settings[COLOR_FIELD_NAMES.color]
-    console.log({
-      width: ui.width,
-      height: ui.height,
-    })
-
     return {
       width: ui.width,
       height: ui.height,
       backgroundColor: settings[COLOR_FIELD_NAMES.background],
-      color,
-      borderColor: settings[COLOR_FIELD_NAMES.color],
+      color: settings.color,
+      borderColor: settings.color,
     }
   }, [settings, ui.height, ui.width])
 
   const primaryAxisStyle: CSSProperties = useMemo(() => {
-    const color = settings[COLOR_FIELD_NAMES.color]
+    const color = settings.color
     return {
       background: `
         repeating-linear-gradient(to right, ${color} 0px 1px, transparent 1px ${settings[UNIT_STEP_FIELD_NAMES.primaryUnitStep]}${settings[UNIT_TYPE_FIELD_NAMES.primaryUnit]})
@@ -117,7 +111,7 @@ export const Ruler = () => {
   }, [settings])
 
   const secondaryAxisStyle: CSSProperties = useMemo(() => {
-    const color = settings[COLOR_FIELD_NAMES.color]
+    const color = settings.color
     return {
       background: `
         repeating-linear-gradient(to right, ${color} 0px 1px, transparent 1px ${settings[UNIT_STEP_FIELD_NAMES.secondaryUnitStep]}${settings[UNIT_TYPE_FIELD_NAMES.secondaryUnit]})
@@ -147,13 +141,14 @@ export const Ruler = () => {
             style={{ gap: `calc(${settings.primaryUnitStep}${settings.primaryUnit} - 1px)` }}
           >
             {primaryUnitStepsToPaint.map((stepNumber) => {
-              // console.log(`-calc(${-(index + 1) * settings.primaryUnitStep}${settings.primaryUnit} - 1px)`)
-
               return (
                 <span
                   key={stepNumber}
                   className={styles.step}
-                  style={{ left: `calc(${stepNumber * settings.primaryUnitStep}${settings.primaryUnit} - 1px)` }}
+                  style={{
+                    color: settings.color,
+                    left: `calc(${stepNumber * settings.primaryUnitStep}${settings.primaryUnit} - 1px)`,
+                  }}
                 >
                   {stepNumber}
                 </span>
@@ -161,7 +156,9 @@ export const Ruler = () => {
             })}
           </div>
 
-          <h1 className={styles.presentational}>@Michael</h1>
+          <h1 className={styles.presentational} style={{ color: settings.color }}>
+            ©2025 | navasardianmichael@gmail.com
+          </h1>
 
           <div className={combineClassNames(styles.axis, styles.secondary)} style={secondaryAxisStyle}></div>
         </div>

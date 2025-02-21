@@ -147,11 +147,13 @@ export const Ruler = () => {
             style={{ gap: `calc(${settings.primaryUnitStep}${settings.primaryUnit} - 1px)` }}
           >
             {primaryUnitStepsToPaint.map((stepNumber) => {
+              // console.log(`-calc(${-(index + 1) * settings.primaryUnitStep}${settings.primaryUnit} - 1px)`)
+
               return (
                 <span
                   key={stepNumber}
                   className={styles.step}
-                  // style={index ? { marginLeft: `calc(${settings.primaryUnitStep}${settings.primaryUnit} - 1px)` } : {}}
+                  style={{ left: `calc(${stepNumber * settings.primaryUnitStep}${settings.primaryUnit} - 1px)` }}
                 >
                   {stepNumber}
                 </span>

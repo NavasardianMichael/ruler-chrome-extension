@@ -26,25 +26,45 @@
     resize: both;
     overflow: auto;
     transition: box-shadow 0.1s;
+    user-select: none;
+    position: relative;
 
     .axis,
     .steps {
       margin-left: var(--ruler-extension-css-vars-space-lg);
     }
 
-    .presentational {
+    /* .presentational {
+      margin: auto var(--ruler-extension-css-vars-space-lg);
       flex-grow: 1;
-    }
+      color: lightgray;
+    } */
+
     .axis {
-      height: 40%;
-      max-height: 50px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+
+      &.primary {
+        height: 40%;
+        max-height: 60px;
+      }
+
+      &.secondary {
+        height: 20%;
+        max-height: 40px;
+      }
     }
 
     .steps {
       display: flex;
+      position: relative;
 
       .step {
-        transform: translateX(-50%);
+        position: absolute;
+        transform: translateX(calc(-50% - 2px));
+        top: 60px;
       }
     }
   }

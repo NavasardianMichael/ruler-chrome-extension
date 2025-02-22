@@ -11,5 +11,6 @@ export type ColorFieldName = (typeof COLOR_FIELD_NAMES)[keyof typeof COLOR_FIELD
 export type SettingsState = Record<UnitTypeFieldName, UnitType> &
   Record<UnitStepFieldName, number> &
   Record<ColorFieldName, string> & {
-    showSecondaryField: boolean
+    showSecondaryUnit: boolean
+    rotationDegree: number
   }

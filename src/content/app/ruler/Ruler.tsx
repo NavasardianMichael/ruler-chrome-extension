@@ -1,11 +1,5 @@
 import { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import {
-  COLOR_FIELD_NAMES,
-  SETTINGS_FORM_INITIAL_VALUES,
-  UNIT_CONVERSION_FACTORS_BY_PX,
-  UNIT_STEP_FIELD_NAMES,
-  UNIT_TYPE_FIELD_NAMES,
-} from '_shared/constants/settings'
+import { SETTINGS_FORM_INITIAL_VALUES, UNIT_CONVERSION_FACTORS_BY_PX } from '_shared/constants/settings'
 import { UI_INITIAL_VALUES } from '_shared/constants/ui'
 import { getStorageValue } from '_shared/functions/chromeStorage'
 import { combineClassNames } from '_shared/functions/commons'
@@ -95,9 +89,10 @@ export const Ruler = () => {
     return {
       width: ui.width,
       height: ui.height,
-      backgroundColor: settings[COLOR_FIELD_NAMES.background],
+      backgroundColor: settings.backgroundColor,
       color: settings.color,
       borderColor: settings.color,
+      transform: `rotate(${settings.rotationDegree}deg)`,
     }
   }, [settings, ui.height, ui.width])
 
@@ -105,7 +100,10 @@ export const Ruler = () => {
     const color = settings.color
     return {
       background: `
-        repeating-linear-gradient(to right, ${color} 0px 1px, transparent 1px ${settings[UNIT_STEP_FIELD_NAMES.primaryUnitStep]}${settings[UNIT_TYPE_FIELD_NAMES.primaryUnit]})
+        repeating-linear-gradient(
+          to right, 
+          ${color} 0px 1px, 
+          transparent 1px ${settings.primaryUnitStep}${settings.primaryUnit})
       `,
     }
   }, [settings])
@@ -114,7 +112,10 @@ export const Ruler = () => {
     const color = settings.color
     return {
       background: `
-        repeating-linear-gradient(to right, ${color} 0px 1px, transparent 1px ${settings[UNIT_STEP_FIELD_NAMES.secondaryUnitStep]}${settings[UNIT_TYPE_FIELD_NAMES.secondaryUnit]})
+        repeating-linear-gradient(
+          to right, 
+          ${color} 0px 1px, 
+          transparent 1px ${settings.secondaryUnitStep}${settings.secondaryUnit})
       `,
     }
   }, [settings])
@@ -136,6 +137,7 @@ export const Ruler = () => {
           style={rulerStyle}
         >
           <div className={combineClassNames(styles.axis, styles.primary)} style={primaryAxisStyle}></div>
+
           <div
             className={combineClassNames(styles.steps)}
             style={{ gap: `calc(${settings.primaryUnitStep}${settings.primaryUnit} - 1px)` }}

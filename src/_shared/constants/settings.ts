@@ -46,10 +46,15 @@ export const UNITS_TYPES_PROPS = {
       label: 'Pixels',
       value: UNIT_TYPES.px,
       minStep: 5,
-      maxStep: 200,
+      maxStep: 500,
     },
   },
   allTypes: [UNIT_TYPES.mm, UNIT_TYPES.cm, UNIT_TYPES.in, UNIT_TYPES.pt, UNIT_TYPES.px],
+}
+
+export const ROTATION_DEGREE_PROPS = {
+  minStep: 0,
+  maxStep: 360
 }
 
 export const UNIT_TYPE_SELECTION_TEMPLATE = UNITS_TYPES_PROPS.allTypes.map(
@@ -71,35 +76,41 @@ export const COLOR_FIELD_NAMES = {
   color: 'color',
 } as const
 
+export const REST_FIELD_NAMES = {
+  showSecondaryUnit: 'showSecondaryUnit',
+  rotationDegree: 'rotationDegree'
+} as const
+
 export const SETTINGS_FORM_INITIAL_VALUES: SettingsState = {
-  [UNIT_TYPE_FIELD_NAMES.primaryUnit]: UNIT_TYPES.cm,
-  [UNIT_TYPE_FIELD_NAMES.secondaryUnit]: UNIT_TYPES.mm,
-  [UNIT_STEP_FIELD_NAMES.primaryUnitStep]: UNITS_TYPES_PROPS.byType[UNIT_TYPES.cm].minStep,
-  [UNIT_STEP_FIELD_NAMES.secondaryUnitStep]: UNITS_TYPES_PROPS.byType[UNIT_TYPES.mm].minStep,
-  showSecondaryField: true,
-  [COLOR_FIELD_NAMES.background]: '#fcf4a1',
-  [COLOR_FIELD_NAMES.color]: '#000',
+  primaryUnit: UNIT_TYPES.cm,
+  showSecondaryUnit: true,
+  secondaryUnit: UNIT_TYPES.mm,
+  primaryUnitStep: UNITS_TYPES_PROPS.byType[UNIT_TYPES.cm].minStep,
+  secondaryUnitStep: UNITS_TYPES_PROPS.byType[UNIT_TYPES.mm].minStep,
+  backgroundColor: '#fcf4a1',
+  color: '#000',
+  rotationDegree: 0
 }
 
 export const UNIT_TYPES_SELECTIONS_TEMPLATES = [
   {
     unitType: {
       fieldName: UNIT_TYPE_FIELD_NAMES.primaryUnit,
-      label: 'Choose Ruler Primary Unit  Type',
+      label: 'Choose Primary Unit Type',
     },
     unitStep: {
       fieldName: UNIT_STEP_FIELD_NAMES.primaryUnitStep,
-      label: 'Choose Ruler Primary Unit Step',
+      label: 'Choose Primary Unit Step',
     },
   },
   {
     unitType: {
       fieldName: UNIT_TYPE_FIELD_NAMES.secondaryUnit,
-      label: 'Choose Ruler Secondary Unit Type',
+      label: 'Choose Secondary Unit Type',
     },
     unitStep: {
       fieldName: UNIT_STEP_FIELD_NAMES.secondaryUnitStep,
-      label: 'Choose Ruler Secondary Unit Step',
+      label: 'Choose Secondary Unit Step',
     },
   },
 ]
@@ -107,10 +118,21 @@ export const UNIT_TYPES_SELECTIONS_TEMPLATES = [
 export const COLORS_SELECTIONS_TEMPLATES = [
   {
     name: COLOR_FIELD_NAMES.background,
-    label: 'Choose the Background Color of the Ruler',
+    label: 'Choose Background Color',
   },
   {
     name: COLOR_FIELD_NAMES.color,
-    label: 'Choose the Color of the Ruler',
+    label: 'Choose Text Color',
   },
 ]
+
+export const REST_FIELDS_TEMPLATES = {
+  showSecondaryUnit: {
+    name: REST_FIELD_NAMES.showSecondaryUnit,
+    label: 'Show Secondary Unit',
+  },
+  rotationDegree: {
+    name: REST_FIELD_NAMES.rotationDegree,
+    label: 'Choose Rotation Degree',
+  },
+}

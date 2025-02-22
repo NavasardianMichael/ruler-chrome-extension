@@ -9,8 +9,8 @@
     display: none;
   }
 
-  &:hover {
-    box-shadow: lightgray 0px 0px 20px;
+  &:hover .ruler {
+    opacity: 0.9;
   }
 
   .ruler {
@@ -25,7 +25,7 @@
 
     resize: both;
     overflow: hidden;
-    transition: box-shadow 0.1s;
+    transition: opacity 0.1s;
     user-select: none;
     position: relative;
     min-width: 10.5cm;

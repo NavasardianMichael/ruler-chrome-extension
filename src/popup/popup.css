@@ -5,12 +5,12 @@ body {
 }
 
 #popup-root {
-  min-width: 250px;
+  min-width: 340px;
   display: flex;
   flex-direction: column;
   gap: var(--ruler-extension-css-vars-space-lg);
 
-  font-size: var(--ruler-extension-css-vars-space-sm);
+  font-size: 14px;
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-synthesis: none;

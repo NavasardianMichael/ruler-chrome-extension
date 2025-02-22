@@ -1,0 +1,81 @@
+.settings {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ruler-extension-css-vars-space-md);
+  padding: var(--ruler-extension-css-vars-space-sm) var(--ruler-extension-css-vars-space-lg)
+    var(--ruler-extension-css-vars-space-lg) var(--ruler-extension-css-vars-space-lg);
+  user-select: none;
+
+  .settingsBlock {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ruler-extension-css-vars-space-md);
+
+    & label {
+      font-weight: bold;
+    }
+
+    & input,
+    & select {
+      padding: var(--ruler-extension-css-vars-space-xxs) var(--ruler-extension-css-vars-space-xs);
+      border-radius: calc(var(--ruler-extension-css-vars-space-xxs) / 2);
+      border: 1px solid var(--ruler-extension-css-vars-border-color);
+      box-shadow: none;
+
+      &:focus-visible {
+        outline-color: var(--ruler-extension-css-vars-bolder-color);
+      }
+    }
+
+    &.rotationDegreeSelection {
+      .rotationFields {
+        display: flex;
+        align-items: center;
+        gap: var(--ruler-extension-css-vars-space-xs);
+      }
+    }
+
+    .unitSettingsBlock {
+      display: flex;
+      flex-direction: column;
+      gap: var(--ruler-extension-css-vars-space-lg);
+
+      &.unitSelection {
+        display: flex;
+        flex-direction: column;
+        gap: var(--ruler-extension-css-vars-space-md);
+
+        .showSecondaryFieldSection {
+          margin-top: var(--ruler-extension-css-vars-space-md);
+          display: flex;
+          gap: var(--ruler-extension-css-vars-space-xs);
+        }
+
+        .unitFields {
+          display: flex;
+          align-items: center;
+          gap: var(--ruler-extension-css-vars-space-xs);
+        }
+      }
+    }
+  }
+
+  .colorsSelection {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ruler-extension-css-vars-space-md);
+
+    .colorSelection {
+      display: flex;
+      align-items: center;
+      gap: var(--ruler-extension-css-vars-space-xs);
+
+      & input {
+        padding: 0;
+        height: calc(var(--ruler-extension-css-vars-space-md) * 2);
+        width: calc(var(--ruler-extension-css-vars-space-md) * 3);
+        box-sizing: content-box;
+      }
+    }
+  }
+}

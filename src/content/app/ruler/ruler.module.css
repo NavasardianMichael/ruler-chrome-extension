@@ -23,13 +23,16 @@
     border-radius: var(--ruler-extension-css-vars-space-xs);
     box-sizing: border-box;
 
-    resize: both;
     overflow: hidden;
     transition: opacity 0.1s;
     user-select: none;
     position: relative;
     min-width: 10.5cm;
     min-height: 106px;
+
+    &:not(.resizingDisabled) {
+      resize: both;
+    }
 
     .axis,
     .steps {

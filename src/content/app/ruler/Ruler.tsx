@@ -52,27 +52,23 @@ export const Ruler = () => {
       if (!isSyncedWithChromeStorage) return
       for (const entry of entries) {
         const { width, height } = entry.target.getBoundingClientRect()
-        console.log({ width, height })
 
-        queueMicrotask(() => {
-          if (!height || !width) return
-          console.log({
-            height: height,
-            width: width,
-          })
+        setTimeout(() => {
           setUIProps({
             height: height,
             width: width,
           })
-        })
+        }, 0)
       }
     })
+
+    if (!ui.height || !ui.width || (ui.rotationDegree !== 0 && ui.rotationDegree !== 360)) return
     observer.observe(rulerElementRef.current as HTMLDivElement)
 
     return () => {
       observer?.disconnect()
     }
-  }, [isSyncedWithChromeStorage, setUIProps])
+  }, [isSyncedWithChromeStorage, setUIProps, ui.height, ui.rotationDegree, ui.width])
 
   useEffect(() => {
     if (!chrome.storage) return
@@ -80,6 +76,7 @@ export const Ruler = () => {
       console.log({ changes, areaName })
       if (areaName === 'local' && changes.settings) {
         const newValue = changes.settings.newValue
+        if (JSON.stringify(newValue) === JSON.stringify(changes.settings.oldValue)) return
         setSettings(newValue)
       }
     })
@@ -133,7 +130,11 @@ export const Ruler = () => {
       <div className={styles.container} hidden={!isSyncedWithChromeStorage}>
         <div
           ref={rulerElementRef}
-          className={combineClassNames(styles.ruler, !isSyncedWithChromeStorage && styles.hidden)}
+          className={combineClassNames(
+            styles.ruler,
+            !isSyncedWithChromeStorage && styles.hidden,
+            settings.rotationDegree !== 0 && settings.rotationDegree !== 360 && styles.resizingDisabled
+          )}
           style={rulerStyle}
         >
           <div className={combineClassNames(styles.axis, styles.primary)} style={primaryAxisStyle}></div>

@@ -7,8 +7,12 @@ export const useSyncLocalStateToChromeStorage = (data: unknown) => {
 
     const sync = async () => {
       const prev = await chrome.storage.local.get()
-      if (JSON.stringify(data) === JSON.stringify(prev)) return
-      setStorageValue(data)
+      const newState = {
+        ...prev,
+        ...data,
+      }
+      if (JSON.stringify(newState) === JSON.stringify(prev)) return
+      setStorageValue(newState)
     }
 
     sync()

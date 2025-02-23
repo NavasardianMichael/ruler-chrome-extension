@@ -1,4 +1,4 @@
-import { ChangeEventHandler, useEffect, useState } from 'react'
+import { ChangeEventHandler, MouseEventHandler, useEffect, useState } from 'react'
 import {
   COLORS_SELECTIONS_TEMPLATES,
   REST_FIELDS_TEMPLATES,
@@ -10,7 +10,8 @@ import {
   UNIT_TYPE_FIELD_NAMES,
   UNIT_TYPE_SELECTION_TEMPLATE,
 } from '_shared/constants/settings'
-import { getStorageValue } from '_shared/functions/chromeStorage'
+import { UI_INITIAL_VALUES } from '_shared/constants/ui'
+import { getStorageValue, setStorageValue } from '_shared/functions/chromeStorage'
 import { combineClassNames } from '_shared/functions/commons'
 import { useSyncLocalStateToChromeStorage } from '_shared/hooks/useSyncLocalStateToChromeStorage'
 import { SettingsState, UnitType, UnitTypeFieldName } from '_shared/types/settings'
@@ -62,6 +63,13 @@ export const Settings = () => {
       ...prev,
       [name]: name === REST_FIELD_NAMES.showSecondaryUnit ? !prev.showSecondaryUnit : value,
     }))
+  }
+
+  const handleResetClick: MouseEventHandler<HTMLButtonElement> = () => {
+    setStorageValue({
+      settings: SETTINGS_FORM_INITIAL_VALUES,
+      ui: UI_INITIAL_VALUES,
+    })
   }
 
   if (!isSyncedWithChromeStorage) return null
@@ -180,6 +188,7 @@ export const Settings = () => {
           )
         })}
       </div>
+      <button onClick={handleResetClick}>Reset Settings</button>
     </main>
   )
 }

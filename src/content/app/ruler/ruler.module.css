@@ -9,8 +9,22 @@
     display: none;
   }
 
-  &:hover .ruler {
-    opacity: 0.9;
+  .rotationBtn {
+    transition: opacity 0.1s;
+    position: absolute;
+    top: 0;
+    right: -30px;
+    background-color: transparent;
+    border: none;
+    outline: none;
+
+    &:not(.active) {
+      opacity: 0;
+    }
+  }
+
+  &:hover .rotationBtn {
+    opacity: 1;
   }
 
   .ruler {
@@ -29,7 +43,9 @@
     user-select: none;
     position: relative;
     min-width: 10.5cm;
+    max-width: 20.5cm;
     min-height: 106px;
+    max-height: 600px;
 
     .axis,
     .steps {

@@ -1,4 +1,5 @@
 import { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+
 import { SETTINGS_FORM_INITIAL_VALUES, UNIT_CONVERSION_FACTORS_BY_PX } from '_shared/constants/settings'
 import { UI_INITIAL_VALUES } from '_shared/constants/ui'
 import { getStorageValue } from '_shared/functions/chromeStorage'
@@ -6,6 +7,7 @@ import { combineClassNames } from '_shared/functions/commons'
 import { useSyncLocalStateToChromeStorage } from '_shared/hooks/useSyncLocalStateToChromeStorage'
 import { SettingsState } from '_shared/types/settings'
 import { UIState } from '_shared/types/ui'
+
 import { Draggable } from '../draggable/Draggable'
 import styles from './ruler.module.css'
 
@@ -13,9 +15,11 @@ export const Ruler = () => {
   const [settings, setSettings] = useState(SETTINGS_FORM_INITIAL_VALUES)
   const [ui, setUI] = useState(UI_INITIAL_VALUES)
   const [isSyncedWithChromeStorage, setIsSyncedWithChromeStorage] = useState(false)
-
+  
   const rulerElementRef = useRef<HTMLDivElement>(null)
-
+  
+  const syncLocalStateToChromeStorage = useSyncLocalStateToChromeStorage()
+  
   const setUIProps = useCallback((newProps: Partial<typeof ui>) => {
     setUI((prev) => {
       const newState = {
@@ -23,6 +27,7 @@ export const Ruler = () => {
         ...newProps,
       }
       if (JSON.stringify(newState) === JSON.stringify(prev)) return prev
+      syncLocalStateToChromeStorage({ui: newState})
       return newState
     })
   }, [])
@@ -38,31 +43,25 @@ export const Ruler = () => {
     syncChromeStorageToLocalState()
   }, [])
 
-  const state = useMemo(
-    () => ({
-      settings,
-      ui,
-    }),
-    [settings, ui]
-  )
-  useSyncLocalStateToChromeStorage(state)
 
   useEffect(() => {
+    if (!ui.height || !ui.width || (ui.rotationDegree !== 0 && ui.rotationDegree !== 360)) return
+    if (!isSyncedWithChromeStorage) return
+    
     const observer = new ResizeObserver((entries) => {
-      if (!isSyncedWithChromeStorage) return
       for (const entry of entries) {
         const { width, height } = entry.target.getBoundingClientRect()
-
         setTimeout(() => {
+      if(Math.floor(width) === ui.width && Math.floor(height) === ui.height) return
           setUIProps({
-            height: height,
-            width: width,
+            height: Math.floor(height),
+            width: Math.floor(width),
           })
         }, 0)
       }
     })
 
-    if (!ui.height || !ui.width || (ui.rotationDegree !== 0 && ui.rotationDegree !== 360)) return
+
     observer.observe(rulerElementRef.current as HTMLDivElement)
 
     return () => {
@@ -73,25 +72,32 @@ export const Ruler = () => {
   useEffect(() => {
     if (!chrome.storage) return
     chrome.storage.onChanged.addListener((changes, areaName) => {
-      console.log({ changes, areaName })
       if (areaName === 'local' && changes.settings) {
-        const newValue = changes.settings.newValue
-        if (JSON.stringify(newValue) === JSON.stringify(changes.settings.oldValue)) return
+        const {oldValue, newValue }= changes.settings
+        
+        if (JSON.stringify(newValue) === JSON.stringify(oldValue)) return
+        console.log('chrome.storage.onChanged: ')
+        console.log({oldValue,newValue, });
         setSettings(newValue)
       }
     })
   }, [])
 
+  const containerStyle: CSSProperties = useMemo(() => {
+    return {
+      transform: `rotate(${settings.rotationDegree}deg)`,
+    }
+  }, [ settings.rotationDegree])
+  
   const rulerStyle: CSSProperties = useMemo(() => {
     return {
       width: ui.width,
       height: ui.height,
       backgroundColor: settings.backgroundColor,
       color: settings.color,
-      borderColor: settings.color,
-      transform: `rotate(${settings.rotationDegree}deg)`,
+      outlineColor: settings.color,
     }
-  }, [settings, ui.height, ui.width])
+  }, [settings.color,settings.backgroundColor, ui.height, ui.width])
 
   const primaryAxisStyle: CSSProperties = useMemo(() => {
     const color = settings.color
@@ -127,7 +133,7 @@ export const Ruler = () => {
 
   return (
     <Draggable>
-      <div className={styles.container} hidden={!isSyncedWithChromeStorage}>
+      <div className={styles.container} hidden={!isSyncedWithChromeStorage} style={containerStyle}>
         <div
           ref={rulerElementRef}
           className={combineClassNames(

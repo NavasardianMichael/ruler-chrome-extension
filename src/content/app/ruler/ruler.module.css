@@ -4,7 +4,11 @@
   position: relative;
   z-index: 9999;
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  will-change: transform;
 
+  /* &:not(.resizingDisabled) { */
+  /* } */
+  
   &.hidden {
     display: none;
   }
@@ -14,6 +18,7 @@
   }
 
   .ruler {
+    resize: both;
     display: flex;
     flex-direction: column;
     gap: var(--ruler-extension-css-vars-space-sm);
@@ -28,11 +33,11 @@
     user-select: none;
     position: relative;
     min-width: 10.5cm;
+    max-width: 60cm;
     min-height: 106px;
+    max-height: 600px;
 
-    &:not(.resizingDisabled) {
-      resize: both;
-    }
+
 
     .axis,
     .steps {

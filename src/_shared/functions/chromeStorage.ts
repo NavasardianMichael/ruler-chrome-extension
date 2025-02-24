@@ -16,7 +16,6 @@ export const setStorageValue = async <T>(newValue: T) => {
     ...prev,
     ...newValue,
   }
-  chrome.storage.local.set(newState, () => {
-    console.log('Updated chrome.storage', { newState })
-  })
+  if (JSON.stringify(prev) === JSON.stringify(newState)) return
+  await chrome.storage.local.set(newState)
 }

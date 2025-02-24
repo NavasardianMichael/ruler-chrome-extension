@@ -1,13 +1,11 @@
 import { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-
 import { SETTINGS_FORM_INITIAL_VALUES, UNIT_CONVERSION_FACTORS_BY_PX } from '_shared/constants/settings'
 import { UI_INITIAL_VALUES } from '_shared/constants/ui'
-import { getStorageValue } from '_shared/functions/chromeStorage'
+import { getStorageValue, setStorageValue } from '_shared/functions/chromeStorage'
 import { combineClassNames } from '_shared/functions/commons'
-import { useSyncLocalStateToChromeStorage } from '_shared/hooks/useSyncLocalStateToChromeStorage'
 import { SettingsState } from '_shared/types/settings'
+import { State } from '_shared/types/state'
 import { UIState } from '_shared/types/ui'
-
 import { Draggable } from '../draggable/Draggable'
 import styles from './ruler.module.css'
 
@@ -15,11 +13,9 @@ export const Ruler = () => {
   const [settings, setSettings] = useState(SETTINGS_FORM_INITIAL_VALUES)
   const [ui, setUI] = useState(UI_INITIAL_VALUES)
   const [isSyncedWithChromeStorage, setIsSyncedWithChromeStorage] = useState(false)
-  
+
   const rulerElementRef = useRef<HTMLDivElement>(null)
-  
-  const syncLocalStateToChromeStorage = useSyncLocalStateToChromeStorage()
-  
+
   const setUIProps = useCallback((newProps: Partial<typeof ui>) => {
     setUI((prev) => {
       const newState = {
@@ -27,7 +23,7 @@ export const Ruler = () => {
         ...newProps,
       }
       if (JSON.stringify(newState) === JSON.stringify(prev)) return prev
-      syncLocalStateToChromeStorage({ui: newState})
+      setStorageValue({ ui: newState })
       return newState
     })
   }, [])
@@ -43,52 +39,76 @@ export const Ruler = () => {
     syncChromeStorageToLocalState()
   }, [])
 
+  useEffect(() => {
+    const toggleRuler = async () => {
+      const state: State = await chrome.storage.local.get()
+      const { settings, ui } = state
+      if (!settings && !ui) {
+        await setStorageValue({
+          settings: {
+            ...SETTINGS_FORM_INITIAL_VALUES,
+            toggleRuler: !(state?.settings?.toggleRuler ?? SETTINGS_FORM_INITIAL_VALUES.toggleRuler),
+          },
+          ui: UI_INITIAL_VALUES,
+        })
+      } else {
+        await setStorageValue({
+          settings: {
+            ...state.settings,
+            toggleRuler: !(state?.settings?.toggleRuler ?? SETTINGS_FORM_INITIAL_VALUES.toggleRuler),
+          },
+        })
+      }
+    }
+
+    const onKeyPress = (event: KeyboardEvent) => {
+      if (!event.ctrlKey || event.key.toLowerCase() !== 'q') return
+      toggleRuler()
+    }
+
+    document.addEventListener('keyup', onKeyPress)
+
+    return () => {
+      document.removeEventListener('keyup', onKeyPress)
+    }
+  }, [])
 
   useEffect(() => {
-    if (!ui.height || !ui.width || (ui.rotationDegree !== 0 && ui.rotationDegree !== 360)) return
+    if (!ui.height || !ui.width || !rulerElementRef.current) return
     if (!isSyncedWithChromeStorage) return
-    
+
     const observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
-        const { width, height } = entry.target.getBoundingClientRect()
+        const { width, height } = entry.contentRect
+        if (!width || !height) return
         setTimeout(() => {
-      if(Math.floor(width) === ui.width && Math.floor(height) === ui.height) return
+          if (Math.floor(width) === ui.width && Math.floor(height) === ui.height) return
           setUIProps({
             height: Math.floor(height),
             width: Math.floor(width),
           })
-        }, 0)
+        }, 1)
       }
     })
-
 
     observer.observe(rulerElementRef.current as HTMLDivElement)
 
     return () => {
       observer?.disconnect()
     }
-  }, [isSyncedWithChromeStorage, setUIProps, ui.height, ui.rotationDegree, ui.width])
+  }, [isSyncedWithChromeStorage, setUIProps, ui.height, ui.width])
 
   useEffect(() => {
     if (!chrome.storage) return
     chrome.storage.onChanged.addListener((changes, areaName) => {
       if (areaName === 'local' && changes.settings) {
-        const {oldValue, newValue }= changes.settings
-        
+        const { oldValue, newValue } = changes.settings
         if (JSON.stringify(newValue) === JSON.stringify(oldValue)) return
-        console.log('chrome.storage.onChanged: ')
-        console.log({oldValue,newValue, });
         setSettings(newValue)
       }
     })
   }, [])
 
-  const containerStyle: CSSProperties = useMemo(() => {
-    return {
-      transform: `rotate(${settings.rotationDegree}deg)`,
-    }
-  }, [ settings.rotationDegree])
-  
   const rulerStyle: CSSProperties = useMemo(() => {
     return {
       width: ui.width,
@@ -97,7 +117,7 @@ export const Ruler = () => {
       color: settings.color,
       outlineColor: settings.color,
     }
-  }, [settings.color,settings.backgroundColor, ui.height, ui.width])
+  }, [settings.color, settings.backgroundColor, ui.height, ui.width])
 
   const primaryAxisStyle: CSSProperties = useMemo(() => {
     const color = settings.color
@@ -131,15 +151,16 @@ export const Ruler = () => {
     return steps
   }, [settings.primaryUnit, settings.primaryUnitStep, ui.width])
 
+  if (!settings.toggleRuler) return
+
   return (
     <Draggable>
-      <div className={styles.container} hidden={!isSyncedWithChromeStorage} style={containerStyle}>
+      <div className={styles.container} hidden={!isSyncedWithChromeStorage}>
         <div
           ref={rulerElementRef}
           className={combineClassNames(
             styles.ruler,
-            !isSyncedWithChromeStorage && styles.hidden,
-            settings.rotationDegree !== 0 && settings.rotationDegree !== 360 && styles.resizingDisabled
+            +settings.rotationDegree !== 0 && +settings.rotationDegree !== 360 && styles.resizingDisabled
           )}
           style={rulerStyle}
         >

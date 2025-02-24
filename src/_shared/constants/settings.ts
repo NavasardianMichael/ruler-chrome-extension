@@ -77,11 +77,18 @@ export const COLOR_FIELD_NAMES = {
 } as const
 
 export const REST_FIELD_NAMES = {
+  toggleRuler: 'toggleRuler',
   showSecondaryUnit: 'showSecondaryUnit',
   rotationDegree: 'rotationDegree'
 } as const
 
+export const BINARY_FIELD_NAMES = [
+  REST_FIELD_NAMES.toggleRuler,
+  REST_FIELD_NAMES.showSecondaryUnit,
+] as const
+
 export const SETTINGS_FORM_INITIAL_VALUES: SettingsState = {
+  toggleRuler: false,
   primaryUnit: UNIT_TYPES.cm,
   showSecondaryUnit: true,
   secondaryUnit: UNIT_TYPES.mm,
@@ -127,6 +134,10 @@ export const COLORS_SELECTIONS_TEMPLATES = [
 ]
 
 export const REST_FIELDS_TEMPLATES = {
+  toggleRuler: {
+    name: REST_FIELD_NAMES.toggleRuler,
+    label: 'Show/Hide Ruler',
+  },
   showSecondaryUnit: {
     name: REST_FIELD_NAMES.showSecondaryUnit,
     label: 'Show Secondary Unit',

@@ -6,9 +6,9 @@ import styles from '../settings.module.css'
 
 export const Rotation: FC<SettingsCommonProps> = ({ handleInputChange, settings }) => {
   return (
-    <div className={combineClassNames(styles.flex, styles.column, styles.spaceXS)}>
+    <div className={combineClassNames(styles.flex, styles.column, styles.spaceSM)}>
       <label htmlFor={REST_FIELDS_TEMPLATES.rotationDegree.name}>{REST_FIELDS_TEMPLATES.rotationDegree.label}</label>
-      <div>
+      <div className={combineClassNames(styles.flex, styles.spaceSM)}>
         <input
           type="range"
           name={REST_FIELDS_TEMPLATES.rotationDegree.name}

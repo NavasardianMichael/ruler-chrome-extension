@@ -20,7 +20,7 @@ export const Units: FC<SettingsCommonProps> = ({ handleInputChange, handleUnitTy
         return (
           <Fragment key={unitTypeTemplate.unitType.fieldName}>
             {isSecondaryField && (
-              <div className={combineClassNames(styles.flex, styles.spaceXS)}>
+              <div className={combineClassNames(styles.flex, styles.spaceSM)}>
                 <input
                   type="checkbox"
                   id={REST_FIELD_NAMES.showSecondaryUnit}
@@ -37,7 +37,7 @@ export const Units: FC<SettingsCommonProps> = ({ handleInputChange, handleUnitTy
 
             {isSecondaryField && !settings.showSecondaryUnit ? null : (
               <>
-                <div className={combineClassNames(styles.flex, styles.column, styles.spaceXS)}>
+                <div className={combineClassNames(styles.flex, styles.column, styles.spaceSM)}>
                   <label htmlFor={unitTypeTemplate.unitType.fieldName}>{unitTypeTemplate.unitType.label}</label>
                   <select
                     id={unitTypeTemplate.unitType.fieldName}
@@ -54,7 +54,7 @@ export const Units: FC<SettingsCommonProps> = ({ handleInputChange, handleUnitTy
                     })}
                   </select>
                 </div>
-                <div className={combineClassNames(styles.flex, styles.column, styles.spaceXS)}>
+                <div className={combineClassNames(styles.flex, styles.column, styles.spaceSM)}>
                   <label htmlFor={unitTypeTemplate.unitStep.fieldName}>{unitTypeTemplate.unitStep.label}</label>
                   <div>
                     <input

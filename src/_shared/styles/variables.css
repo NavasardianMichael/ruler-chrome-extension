@@ -1,4 +1,5 @@
 :root {
+  --ruler-extension-css-vars-primary-color: #017afa;
   --ruler-extension-css-vars-overlay-color: #fff;
   --ruler-extension-css-vars-border-color: #efefef;
   --ruler-extension-css-vars-border-bolder-color: #d8d8d8;

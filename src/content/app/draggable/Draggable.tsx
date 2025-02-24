@@ -1,4 +1,9 @@
 import { CSSProperties, FC, MouseEvent, ReactNode, useEffect, useMemo, useRef, useState } from 'react'
+import { SETTINGS_FORM_INITIAL_VALUES } from '_shared/constants/settings'
+import { UI_INITIAL_VALUES } from '_shared/constants/ui'
+import { getStorageValue, setStorageValue } from '_shared/functions/chromeStorage'
+import { State } from '_shared/types/state'
+import { UIState } from '_shared/types/ui'
 import styles from './draggable.module.css'
 
 // A simple debounce function
@@ -22,27 +27,51 @@ interface DraggableContainerProps {
 }
 
 export const Draggable: FC<DraggableContainerProps> = ({ children, initialX = 100, initialY = 100 }) => {
-  // Current position of the container
   const [position, setPosition] = useState({ x: initialX, y: initialY })
-  // Whether the container is currently being dragged
   const [isDragging, setIsDragging] = useState(false)
-  // The offset between the mouse and the container's top-left corner
+  const [containerRotationDegree, setContainerRotationDegree] = useState(0)
+  const [isSyncedWithChromeStorage, setIsSyncedWithChromeStorage] = useState(false)
   const dragOffset = useRef({ x: 0, y: 0 })
-  const RESIZE_HANDLE_SIZE = 16 // pixels
+  const RESIZE_HANDLE_SIZE = 16
   const draggableRef = useRef<HTMLDivElement>(null)
 
-  // Start dragging and record the initial offset
+  useEffect(() => {
+    if (!chrome.storage) return
+
+    const sync = async () => {
+      const state: State = await chrome.storage.local.get()
+      const { settings, ui } = state
+      if (!settings && !ui) {
+        await setStorageValue({ settings: SETTINGS_FORM_INITIAL_VALUES, ui: UI_INITIAL_VALUES })
+      }
+      setContainerRotationDegree(settings.rotationDegree ?? SETTINGS_FORM_INITIAL_VALUES.rotationDegree)
+      setPosition({
+        x: ui?.left ?? UI_INITIAL_VALUES.left,
+        y: ui?.top ?? UI_INITIAL_VALUES.top,
+      })
+      setIsSyncedWithChromeStorage(true)
+    }
+
+    sync()
+
+    chrome.storage.onChanged.addListener((changes, areaName) => {
+      if (areaName === 'local' && changes.settings) {
+        const { newValue } = changes.settings
+        setContainerRotationDegree(+newValue.rotationDegree)
+      }
+    })
+  }, [])
+
   const handleMouseDown = (e: MouseEvent<HTMLDivElement>) => {
     const rect = draggableRef?.current?.getBoundingClientRect()
     if (!rect) return
 
-    // Check if the mousedown is in the resize area.
     const isInResizeArea = e.clientX > rect.right - RESIZE_HANDLE_SIZE && e.clientY > rect.bottom - RESIZE_HANDLE_SIZE
 
     if (isInResizeArea) {
-      // If the click is in the resize area, do not start dragging.
       return
     }
+
     setIsDragging(true)
     dragOffset.current = {
       x: e.clientX - position.x,
@@ -50,23 +79,31 @@ export const Draggable: FC<DraggableContainerProps> = ({ children, initialX = 10
     }
   }
 
-  // Stop dragging
   const handleMouseUp = () => {
     setIsDragging(false)
   }
 
-  // Create a debounced mousemove handler so that position updates are throttled
   const debouncedMouseMove = useMemo(() => {
-    const fn = (e: MouseEvent) => {
-      setPosition({
+    const fn = async (e: MouseEvent) => {
+      const newState = {
         x: e.clientX - dragOffset.current.x,
         y: e.clientY - dragOffset.current.y,
+      }
+      setPosition(newState)
+
+      const uiFromStorage = await getStorageValue<UIState>('ui')
+
+      await setStorageValue({
+        ui: {
+          ...(uiFromStorage ?? UI_INITIAL_VALUES),
+          top: newState.y,
+          left: newState.x,
+        },
       })
     }
-    return debounce(fn as () => unknown, 0) // Adjust debounce delay (in ms) as needed
+    return debounce(fn as () => unknown, 0)
   }, [])
 
-  // Attach global mousemove and mouseup events when dragging starts
   useEffect(() => {
     if (isDragging) {
       document.addEventListener('mousemove', debouncedMouseMove)
@@ -75,24 +112,29 @@ export const Draggable: FC<DraggableContainerProps> = ({ children, initialX = 10
       document.removeEventListener('mousemove', debouncedMouseMove)
       document.removeEventListener('mouseup', handleMouseUp)
     }
-    // Cleanup on unmount or when isDragging changes
     return () => {
       document.removeEventListener('mousemove', debouncedMouseMove)
       document.removeEventListener('mouseup', handleMouseUp)
     }
   }, [isDragging, debouncedMouseMove])
 
-  // Styling for the draggable container
   const containerStyle: CSSProperties = useMemo(
     () => ({
       left: position.x,
       top: position.y,
+      transform: `rotate(${containerRotationDegree}deg)`,
     }),
-    [position.x, position.y]
+    [containerRotationDegree, position.x, position.y]
   )
 
   return (
-    <div ref={draggableRef} style={containerStyle} className={styles.draggable} onMouseDown={handleMouseDown}>
+    <div
+      ref={draggableRef}
+      style={containerStyle}
+      className={styles.draggable}
+      onMouseDown={handleMouseDown}
+      hidden={!isSyncedWithChromeStorage}
+    >
       {children}
     </div>
   )

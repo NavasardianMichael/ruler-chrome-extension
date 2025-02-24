@@ -1,4 +1,9 @@
 .settings {
+  --ruler-extension-css-vars-switch-base-height: 28px;
+  --ruler-extension-css-vars-switch-base-width: 60px;
+}
+
+.settings {
   display: flex;
   flex-direction: column;
   padding: var(--ruler-extension-css-vars-space-sm) var(--ruler-extension-css-vars-space-lg)
@@ -8,6 +13,10 @@
 
   & label {
     font-weight: bold;
+  }
+
+  & input {
+    margin: 0;
   }
 
   & input:not([type='range']):not([type='color']),
@@ -29,8 +38,64 @@
     box-sizing: content-box;
   }
 
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: var(--ruler-extension-css-vars-switch-base-width);
+    height: var(--ruler-extension-css-vars-switch-base-height);
+
+    & input {
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+      position: relative;
+      z-index: 1;
+
+      &:checked + .slider {
+        background-color: var(--ruler-extension-css-vars-primary-color);
+      }
+
+      &:checked + .slider:before {
+        -webkit-transform: translateX(calc(var(--ruler-extension-css-vars-switch-base-height) - 2px));
+        -ms-transform: translateX(calc(var(--ruler-extension-css-vars-switch-base-height) - 2px));
+        transform: translateX(calc(var(--ruler-extension-css-vars-switch-base-height) - 2px));
+      }
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--ruler-extension-css-vars-border-color);
+      -webkit-transition: 0.2s;
+      transition: 0.2s;
+      border-radius: 34px;
+
+      &:before {
+        border-radius: 50%;
+        position: absolute;
+        content: '';
+        height: calc(var(--ruler-extension-css-vars-switch-base-height) - 8px);
+        width: calc(var(--ruler-extension-css-vars-switch-base-width) - 40px);
+        left: calc(var(--ruler-extension-css-vars-switch-base-width) - 53px);
+        bottom: calc(var(--ruler-extension-css-vars-switch-base-height) - 24px);
+        background-color: var(--ruler-extension-css-vars-overlay-color);
+        -webkit-transition: 0.2s;
+        transition: 0.2s;
+      }
+    }
+  }
+
   .flex {
     display: flex;
+
+    &:not(.column) {
+      align-items: center;
+    }
 
     &.column {
       flex-direction: column;

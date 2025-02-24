@@ -30,6 +30,7 @@ export const Draggable: FC<DraggableContainerProps> = ({ children, initialX = 10
   const [isDragging, setIsDragging] = useState(false)
   const [containerRotationDegree, setContainerRotationDegree] = useState(0)
   const [isSyncedWithChromeStorage, setIsSyncedWithChromeStorage] = useState(false)
+  const [isFocused, setIsFocused] = useState(false)
   const dragOffset = useRef({ x: 0, y: 0 })
   const RESIZE_HANDLE_SIZE = 16
   const draggableRef = useRef<HTMLDivElement>(null)
@@ -129,6 +130,53 @@ export const Draggable: FC<DraggableContainerProps> = ({ children, initialX = 10
     }
   }, [isDragging, debouncedMouseMove])
 
+  useEffect(() => {
+    const handleKeyDown = async (event: KeyboardEvent) => {
+      console.log(event)
+
+      let state = { x: 0, y: 0 }
+      setPosition((prev) => {
+        state = { ...prev }
+        switch (event.key) {
+          case 'ArrowUp':
+            state.y = prev.y - 1
+            return state
+          case 'ArrowDown':
+            state.y = prev.y + 1
+            return state
+          case 'ArrowLeft':
+            state.x = prev.x - 1
+            return state
+          case 'ArrowRight':
+            state.x = prev.x + 1
+            return state
+          default:
+            return prev
+        }
+      })
+      const uiFromStorage = await getStorageValue<UIState>('ui')
+
+      await setStorageValue({
+        ui: {
+          ...UI_INITIAL_VALUES,
+          ...uiFromStorage,
+          top: state.y,
+          left: state.x,
+        },
+      })
+    }
+
+    if (!isFocused) {
+      window.removeEventListener('keydown', handleKeyDown)
+      return
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [isFocused])
+
   const containerStyle: CSSProperties = useMemo(
     () => ({
       left: position.x,
@@ -138,6 +186,17 @@ export const Draggable: FC<DraggableContainerProps> = ({ children, initialX = 10
     [containerRotationDegree, position.x, position.y]
   )
 
+  const handleFocus = () => {
+    console.log('focuysed')
+
+    setIsFocused(true)
+  }
+
+  const handleBlur = () => {
+    console.log('blurred')
+    setIsFocused(false)
+  }
+
   return (
     <div
       ref={draggableRef}
@@ -145,6 +204,9 @@ export const Draggable: FC<DraggableContainerProps> = ({ children, initialX = 10
       className={styles.draggable}
       onMouseDown={handleMouseDown}
       hidden={!isSyncedWithChromeStorage}
+      onFocus={handleFocus}
+      onBlur={handleBlur}
+      tabIndex={0}
     >
       {children}
     </div>

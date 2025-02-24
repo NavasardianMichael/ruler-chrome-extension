@@ -10,8 +10,13 @@
     display: none;
   }
 
+  &:focus,
   &:hover {
     box-shadow: lightgray 0px 0px 24px;
+  }
+
+  &:focus-visible {
+    outline: none;
   }
 
   .ruler {
@@ -30,7 +35,7 @@
     position: relative;
     min-width: 10.5cm;
     max-width: 50cm;
-    min-height: 110px;
+    min-height: 116px;
     max-height: 300px;
 
     &:not(.resizingDisabled) {
@@ -59,8 +64,9 @@
 
     .units {
       position: absolute;
-      top: 80px;
-      left: var(--ruler-extension-css-vars-space-xlg);
+      top: 88px;
+      left: var(--ruler-extension-css-vars-space-lg);
+      opacity: 0.5;
     }
 
     .steps {

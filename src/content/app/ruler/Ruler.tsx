@@ -1,9 +1,5 @@
 import { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import {
-  MIN_STEPS_NUMBERS_TO_PAINT,
-  SETTINGS_FORM_INITIAL_VALUES,
-  UNIT_CONVERSION_FACTORS_BY_PX,
-} from '_shared/constants/settings'
+import { SETTINGS_FORM_INITIAL_VALUES, UNIT_CONVERSION_FACTORS_BY_PX } from '_shared/constants/settings'
 import { UI_INITIAL_VALUES } from '_shared/constants/ui'
 import { getStorageValue, setStorageValue } from '_shared/functions/chromeStorage'
 import { combineClassNames } from '_shared/functions/commons'
@@ -121,14 +117,12 @@ export const Ruler = () => {
 
   const primaryUnitStepsToPaint = useMemo(() => {
     const stepsCount = Math.ceil(
-      ui.width /
-        UNIT_CONVERSION_FACTORS_BY_PX[settings.primaryUnit] /
-        Math.max(settings.primaryUnitStep, MIN_STEPS_NUMBERS_TO_PAINT[settings.primaryUnit])
+      ui.width / UNIT_CONVERSION_FACTORS_BY_PX[settings.primaryUnit] / settings.primaryUnitStep
     )
 
-    const steps = new Array(stepsCount)
-      .fill(undefined)
-      .map((_, i) => i * Math.max(settings.primaryUnitStep, MIN_STEPS_NUMBERS_TO_PAINT[settings.primaryUnit]))
+    const steps = new Array(stepsCount).fill(undefined).map((_, i) => i * settings.primaryUnitStep)
+    console.log({ steps })
+
     return steps
   }, [settings.primaryUnit, settings.primaryUnitStep, ui.width])
 
@@ -149,24 +143,24 @@ export const Ruler = () => {
             className={combineClassNames(styles.steps)}
             style={{ gap: `calc(${settings.primaryUnitStep}${settings.primaryUnit} - 1px)` }}
           >
-            {primaryUnitStepsToPaint.map((stepNumber) => {
+            {primaryUnitStepsToPaint.map((stepNumber, index) => {
               return (
                 <span
                   key={stepNumber}
                   className={styles.step}
                   style={{
                     color: settings.color,
-                    left: `calc(${stepNumber * settings.primaryUnitStep}${settings.primaryUnit} - 1px)`,
+                    left: `calc(${stepNumber}${settings.primaryUnit} - 1px)`,
                     fontSize: 16,
                   }}
                 >
-                  {stepNumber * settings.primaryUnitStep}
+                  {index ? stepNumber : index}
                 </span>
               )
             })}
           </div>
 
-          <div className={styles.units} style={{ fontSize: 16 }}>
+          <div className={styles.units} style={{ fontSize: 14 }}>
             {settings.primaryUnit}
             {` `}
             {settings.showSecondaryUnit && `(${settings.secondaryUnit})`}

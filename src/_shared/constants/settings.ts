@@ -100,7 +100,7 @@ export const SETTINGS_FORM_INITIAL_VALUES: SettingsState = {
   primaryUnitStep: UNITS_TYPES_PROPS.byType[UNIT_TYPES.cm].minStep,
   secondaryUnitStep: UNITS_TYPES_PROPS.byType[UNIT_TYPES.mm].minStep,
   backgroundColor: '#fcf4a1',
-  color: '#000',
+  color: '#000000',
   rotationDegree: 0,
 }
 

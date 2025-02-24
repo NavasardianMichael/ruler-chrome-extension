@@ -5,10 +5,10 @@
   --ruler-extension-css-vars-border-bolder-color: #d8d8d8;
   --ruler-extension-css-vars-action-color: rgb(235, 235, 235);
 
-  --ruler-extension-css-vars-space-xxs: 0.5rem;
-  --ruler-extension-css-vars-space-xs: 0.5rem;
-  --ruler-extension-css-vars-space-sm: 0.75rem;
-  --ruler-extension-css-vars-space-md: 1rem;
-  --ruler-extension-css-vars-space-lg: 1.25rem;
-  --ruler-extension-css-vars-space-xlg: 1.5rem;
+  --ruler-extension-css-vars-space-xxs: 4px;
+  --ruler-extension-css-vars-space-xs: 8px;
+  --ruler-extension-css-vars-space-sm: 12px;
+  --ruler-extension-css-vars-space-md: 16px;
+  --ruler-extension-css-vars-space-lg: 20px;
+  --ruler-extension-css-vars-space-xlg: 24px;
 }

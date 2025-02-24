@@ -3,8 +3,7 @@ import { ManifestV3Export } from '@crxjs/vite-plugin'
 
 const manifest: ManifestV3Export = {
   name: 'Ruler',
-  description:
-    'Quickly measure elements on any webpage with this on-screen ruler tool—perfect for web designers, developers, and anyone who needs precise pixel measurements at a glance.',
+  description: `On-screen resizable, draggable, rotatable and customizable ruler - perfect for web designers, developers, and anyone who needs precise measurements at a glance.`,
   version: '1.0.1',
   manifest_version: 3,
   icons: {

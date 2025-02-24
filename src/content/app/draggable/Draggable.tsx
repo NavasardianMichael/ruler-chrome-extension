@@ -42,12 +42,13 @@ export const Draggable: FC<DraggableContainerProps> = ({ children, initialX = 10
       const { settings, ui } = state
       if (!settings && !ui) {
         await setStorageValue({ settings: SETTINGS_FORM_INITIAL_VALUES, ui: UI_INITIAL_VALUES })
+      } else {
+        setContainerRotationDegree(settings.rotationDegree ?? SETTINGS_FORM_INITIAL_VALUES.rotationDegree)
+        setPosition({
+          x: ui?.left ?? UI_INITIAL_VALUES.left,
+          y: ui?.top ?? UI_INITIAL_VALUES.top,
+        })
       }
-      setContainerRotationDegree(settings.rotationDegree ?? SETTINGS_FORM_INITIAL_VALUES.rotationDegree)
-      setPosition({
-        x: ui?.left ?? UI_INITIAL_VALUES.left,
-        y: ui?.top ?? UI_INITIAL_VALUES.top,
-      })
       setIsSyncedWithChromeStorage(true)
     }
 

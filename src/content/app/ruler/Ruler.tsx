@@ -1,10 +1,13 @@
 import { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { SETTINGS_FORM_INITIAL_VALUES, UNIT_CONVERSION_FACTORS_BY_PX } from '_shared/constants/settings'
+import {
+  MIN_STEPS_NUMBERS_TO_PAINT,
+  SETTINGS_FORM_INITIAL_VALUES,
+  UNIT_CONVERSION_FACTORS_BY_PX,
+} from '_shared/constants/settings'
 import { UI_INITIAL_VALUES } from '_shared/constants/ui'
 import { getStorageValue, setStorageValue } from '_shared/functions/chromeStorage'
 import { combineClassNames } from '_shared/functions/commons'
 import { SettingsState } from '_shared/types/settings'
-import { State } from '_shared/types/state'
 import { UIState } from '_shared/types/ui'
 import { Draggable } from '../draggable/Draggable'
 import styles from './ruler.module.css'
@@ -40,40 +43,6 @@ export const Ruler = () => {
   }, [])
 
   useEffect(() => {
-    const toggleRuler = async () => {
-      const state: State = await chrome.storage.local.get()
-      const { settings, ui } = state
-      if (!settings && !ui) {
-        await setStorageValue({
-          settings: {
-            ...SETTINGS_FORM_INITIAL_VALUES,
-            toggleRuler: !(state?.settings?.toggleRuler ?? SETTINGS_FORM_INITIAL_VALUES.toggleRuler),
-          },
-          ui: UI_INITIAL_VALUES,
-        })
-      } else {
-        await setStorageValue({
-          settings: {
-            ...state.settings,
-            toggleRuler: !(state?.settings?.toggleRuler ?? SETTINGS_FORM_INITIAL_VALUES.toggleRuler),
-          },
-        })
-      }
-    }
-
-    const onKeyPress = (event: KeyboardEvent) => {
-      if (!event.ctrlKey || event.key.toLowerCase() !== 'q') return
-      toggleRuler()
-    }
-
-    document.addEventListener('keyup', onKeyPress)
-
-    return () => {
-      document.removeEventListener('keyup', onKeyPress)
-    }
-  }, [])
-
-  useEffect(() => {
     if (!ui.height || !ui.width || !rulerElementRef.current) return
     if (!isSyncedWithChromeStorage) return
 
@@ -83,6 +52,7 @@ export const Ruler = () => {
         if (!width || !height) return
         setTimeout(() => {
           if (Math.floor(width) === ui.width && Math.floor(height) === ui.height) return
+
           setUIProps({
             height: Math.floor(height),
             width: Math.floor(width),
@@ -151,13 +121,16 @@ export const Ruler = () => {
 
   const primaryUnitStepsToPaint = useMemo(() => {
     const stepsCount = Math.ceil(
-      ui.width / UNIT_CONVERSION_FACTORS_BY_PX[settings.primaryUnit] / settings.primaryUnitStep
+      ui.width /
+        UNIT_CONVERSION_FACTORS_BY_PX[settings.primaryUnit] /
+        Math.max(settings.primaryUnitStep, MIN_STEPS_NUMBERS_TO_PAINT[settings.primaryUnit])
     )
-    const steps = new Array(stepsCount).fill(undefined).map((_, i) => i++)
+
+    const steps = new Array(stepsCount)
+      .fill(undefined)
+      .map((_, i) => i * Math.max(settings.primaryUnitStep, MIN_STEPS_NUMBERS_TO_PAINT[settings.primaryUnit]))
     return steps
   }, [settings.primaryUnit, settings.primaryUnitStep, ui.width])
-
-  if (!settings.toggleRuler) return
 
   return (
     <Draggable>
@@ -191,6 +164,12 @@ export const Ruler = () => {
                 </span>
               )
             })}
+          </div>
+
+          <div className={styles.units} style={{ fontSize: 16 }}>
+            {settings.primaryUnit}
+            {` `}
+            {settings.showSecondaryUnit && `(${settings.secondaryUnit})`}
           </div>
 
           {settings.showSecondaryUnit && (

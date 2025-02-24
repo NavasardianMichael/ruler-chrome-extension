@@ -52,6 +52,14 @@ export const UNITS_TYPES_PROPS = {
   allTypes: [UNIT_TYPES.mm, UNIT_TYPES.cm, UNIT_TYPES.in, UNIT_TYPES.pt, UNIT_TYPES.px],
 }
 
+export const MIN_STEPS_NUMBERS_TO_PAINT: Record<UnitType, number> = {
+  mm: 5,
+  cm: 1,
+  in: 1,
+  pt: 50,
+  px: 50,
+}
+
 export const ROTATION_DEGREE_PROPS = {
   minStep: 0,
   maxStep: 360,

@@ -2,15 +2,16 @@
 
 .container {
   position: relative;
-  z-index: 9999;
+  z-index: 9999 !important;
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-size: var(--ruler-extension-css-vars-space-md);
 
   &.hidden {
     display: none;
   }
 
   &:hover {
-    box-shadow: lightgray 0px 0px 31px;
+    box-shadow: lightgray 0px 0px 24px;
   }
 
   .ruler {
@@ -28,7 +29,9 @@
     user-select: none;
     position: relative;
     min-width: 10.5cm;
-    min-height: 106px;
+    max-width: 50cm;
+    min-height: 90px;
+    max-height: 300px;
 
     &:not(.resizingDisabled) {
       resize: both;
@@ -36,16 +39,7 @@
 
     .axis,
     .steps {
-      margin-left: var(--ruler-extension-css-vars-space-lg);
-    }
-
-    .presentational {
-      margin-top: auto;
-      margin-left: var(--ruler-extension-css-vars-space-lg);
-      margin-bottom: var(--ruler-extension-css-vars-space-md);
-      font-size: var(--ruler-extension-css-vars-space-sm);
-      opacity: 0.2;
-      border: none;
+      margin-left: var(--ruler-extension-css-vars-space-xlg);
     }
 
     .axis {

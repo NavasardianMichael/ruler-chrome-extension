@@ -1,1 +1,3 @@
-/* no specific styles yet */
+#ruler-extension-root {
+  all: revert;
+}

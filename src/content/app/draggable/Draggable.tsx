@@ -6,7 +6,6 @@ import { State } from '_shared/types/state'
 import { UIState } from '_shared/types/ui'
 import styles from './draggable.module.css'
 
-// A simple debounce function
 function debounce<T extends (...args: unknown[]) => void>(func: T, wait: number): T {
   let timeout: number | null = null
   const debounced = (...args: unknown[]) => {
@@ -56,8 +55,18 @@ export const Draggable: FC<DraggableContainerProps> = ({ children, initialX = 10
 
     chrome.storage.onChanged.addListener((changes, areaName) => {
       if (areaName === 'local' && changes.settings) {
-        const { newValue } = changes.settings
+        const { oldValue, newValue } = changes.settings
+        if (JSON.stringify(newValue) === JSON.stringify(oldValue)) return
         setContainerRotationDegree(+newValue.rotationDegree)
+      }
+
+      if (areaName === 'local' && changes.ui) {
+        const { oldValue, newValue } = changes.ui
+        if (JSON.stringify(newValue) === JSON.stringify(oldValue)) return
+        setPosition({
+          x: newValue.left,
+          y: newValue.top,
+        })
       }
     })
   }, [])
@@ -95,7 +104,8 @@ export const Draggable: FC<DraggableContainerProps> = ({ children, initialX = 10
 
       await setStorageValue({
         ui: {
-          ...(uiFromStorage ?? UI_INITIAL_VALUES),
+          ...UI_INITIAL_VALUES,
+          ...uiFromStorage,
           top: newState.y,
           left: newState.x,
         },

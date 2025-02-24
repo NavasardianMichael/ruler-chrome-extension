@@ -1,5 +1,11 @@
-import { ChangeEventHandler, useCallback, useEffect, useMemo, useState } from 'react'
-import { BINARY_FIELD_NAMES, SETTINGS_FORM_INITIAL_VALUES, UNITS_TYPES_PROPS } from '_shared/constants/settings'
+import { ChangeEventHandler, MouseEventHandler, useCallback, useEffect, useMemo, useState } from 'react'
+import {
+  BINARY_FIELD_NAMES,
+  SETTINGS_FORM_INITIAL_VALUES,
+  UNITS_TYPES_PROPS,
+  UNIT_TYPE_FIELD_NAMES,
+} from '_shared/constants/settings'
+import { UI_INITIAL_VALUES } from '_shared/constants/ui'
 import { getStorageValue, setStorageValue } from '_shared/functions/chromeStorage'
 import { BinaryFieldName, SettingsState, UnitType, UnitTypeFieldName } from '_shared/types/settings'
 import { Colors } from './sections/Colors'
@@ -29,6 +35,7 @@ export const Settings = () => {
 
   const handleUnitTypeChange: ChangeEventHandler<HTMLSelectElement> = useCallback((event) => {
     const name = event.target.name as UnitTypeFieldName
+    const isSecondary = name === UNIT_TYPE_FIELD_NAMES.secondaryUnit
     const value = event.target.value as UnitType
     setSettings((prev) => {
       const result = {
@@ -36,14 +43,16 @@ export const Settings = () => {
         [name]: value,
       }
       if (
-        prev.primaryUnitStep < UNITS_TYPES_PROPS.byType[value].minStep ||
-        prev.primaryUnitStep > UNITS_TYPES_PROPS.byType[value].maxStep
+        !isSecondary &&
+        (prev.primaryUnitStep < UNITS_TYPES_PROPS.byType[value].minStep ||
+          prev.primaryUnitStep > UNITS_TYPES_PROPS.byType[value].maxStep)
       ) {
         result.primaryUnitStep = UNITS_TYPES_PROPS.byType[value].minStep
       }
       if (
-        prev.secondaryUnitStep < UNITS_TYPES_PROPS.byType[value].minStep ||
-        prev.secondaryUnitStep > UNITS_TYPES_PROPS.byType[value].maxStep
+        isSecondary &&
+        (prev.secondaryUnitStep < UNITS_TYPES_PROPS.byType[value].minStep ||
+          prev.secondaryUnitStep > UNITS_TYPES_PROPS.byType[value].maxStep)
       ) {
         result.secondaryUnitStep = UNITS_TYPES_PROPS.byType[value].minStep
       }
@@ -72,6 +81,14 @@ export const Settings = () => {
     }
   }, [handleInputChange, handleUnitTypeChange, settings])
 
+  const handleResetSettingsClick: MouseEventHandler<HTMLButtonElement> = () => {
+    setSettings(SETTINGS_FORM_INITIAL_VALUES)
+    setStorageValue({
+      settings: SETTINGS_FORM_INITIAL_VALUES,
+      ui: UI_INITIAL_VALUES,
+    })
+  }
+
   if (!isSyncedWithChromeStorage) return null
 
   return (
@@ -80,6 +97,9 @@ export const Settings = () => {
       <Units {...commonsProps} />
       <Rotation {...commonsProps} />
       <Colors {...commonsProps} />
+      <button className={styles.resetBtn} onClick={handleResetSettingsClick}>
+        Reset Settings
+      </button>
     </main>
   )
 }

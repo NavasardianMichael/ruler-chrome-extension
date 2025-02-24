@@ -7,7 +7,11 @@ import styles from '../settings.module.css'
 export const Rotation: FC<SettingsCommonProps> = ({ handleInputChange, settings }) => {
   return (
     <div className={combineClassNames(styles.flex, styles.column, styles.spaceSM)}>
-      <label htmlFor={REST_FIELDS_TEMPLATES.rotationDegree.name}>{REST_FIELDS_TEMPLATES.rotationDegree.label}</label>
+      <label htmlFor={REST_FIELDS_TEMPLATES.rotationDegree.name}>
+        {REST_FIELDS_TEMPLATES.rotationDegree.label}
+        <p className={styles.hint}>* Ruler resizing is disabled when rotation degree is 0 or 360</p>
+      </label>
+
       <div className={combineClassNames(styles.flex, styles.spaceSM)}>
         <input
           type="range"

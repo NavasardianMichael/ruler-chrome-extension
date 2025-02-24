@@ -39,8 +39,8 @@ export const UNITS_TYPES_PROPS = {
     [UNIT_TYPES.pt]: {
       label: 'Points',
       value: UNIT_TYPES.pt,
-      minStep: 1,
-      maxStep: 10,
+      minStep: 5,
+      maxStep: 500,
     },
     [UNIT_TYPES.px]: {
       label: 'Pixels',
@@ -54,7 +54,7 @@ export const UNITS_TYPES_PROPS = {
 
 export const ROTATION_DEGREE_PROPS = {
   minStep: 0,
-  maxStep: 360
+  maxStep: 360,
 }
 
 export const UNIT_TYPE_SELECTION_TEMPLATE = UNITS_TYPES_PROPS.allTypes.map(
@@ -79,16 +79,13 @@ export const COLOR_FIELD_NAMES = {
 export const REST_FIELD_NAMES = {
   toggleRuler: 'toggleRuler',
   showSecondaryUnit: 'showSecondaryUnit',
-  rotationDegree: 'rotationDegree'
+  rotationDegree: 'rotationDegree',
 } as const
 
-export const BINARY_FIELD_NAMES = [
-  REST_FIELD_NAMES.toggleRuler,
-  REST_FIELD_NAMES.showSecondaryUnit,
-] as const
+export const BINARY_FIELD_NAMES = [REST_FIELD_NAMES.toggleRuler, REST_FIELD_NAMES.showSecondaryUnit] as const
 
 export const SETTINGS_FORM_INITIAL_VALUES: SettingsState = {
-  toggleRuler: false,
+  toggleRuler: true,
   primaryUnit: UNIT_TYPES.cm,
   showSecondaryUnit: true,
   secondaryUnit: UNIT_TYPES.mm,
@@ -96,7 +93,7 @@ export const SETTINGS_FORM_INITIAL_VALUES: SettingsState = {
   secondaryUnitStep: UNITS_TYPES_PROPS.byType[UNIT_TYPES.mm].minStep,
   backgroundColor: '#fcf4a1',
   color: '#000',
-  rotationDegree: 0
+  rotationDegree: 0,
 }
 
 export const UNIT_TYPES_SELECTIONS_TEMPLATES = [

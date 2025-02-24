@@ -7,7 +7,9 @@ import styles from '../settings.module.css'
 export const Toggle: FC<SettingsCommonProps> = ({ handleInputChange, settings }) => {
   return (
     <div className={combineClassNames(styles.flex, styles.spaceSM)}>
-      <label htmlFor={REST_FIELDS_TEMPLATES.toggleRuler.name}>{REST_FIELDS_TEMPLATES.toggleRuler.label}</label>
+      <label htmlFor={REST_FIELDS_TEMPLATES.toggleRuler.name}>
+        {REST_FIELDS_TEMPLATES.toggleRuler.label} (ctrl + Q)
+      </label>
       <div className={styles.switch}>
         <input
           type="checkbox"

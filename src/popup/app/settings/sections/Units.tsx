@@ -15,10 +15,11 @@ export const Units: FC<SettingsCommonProps> = ({ handleInputChange, handleUnitTy
   return (
     <>
       {UNIT_TYPES_SELECTIONS_TEMPLATES.map((unitTypeTemplate) => {
-        const isSecondaryField = unitTypeTemplate.unitType.fieldName === UNIT_TYPE_FIELD_NAMES.secondaryUnit
+        const { fieldName, label } = unitTypeTemplate.unitType
+        const isSecondaryField = fieldName === UNIT_TYPE_FIELD_NAMES.secondaryUnit
 
         return (
-          <Fragment key={unitTypeTemplate.unitType.fieldName}>
+          <Fragment key={fieldName}>
             {isSecondaryField && (
               <div className={combineClassNames(styles.flex, styles.spaceSM)}>
                 <input
@@ -38,16 +39,19 @@ export const Units: FC<SettingsCommonProps> = ({ handleInputChange, handleUnitTy
             {isSecondaryField && !settings.showSecondaryUnit ? null : (
               <>
                 <div className={combineClassNames(styles.flex, styles.column, styles.spaceSM)}>
-                  <label htmlFor={unitTypeTemplate.unitType.fieldName}>{unitTypeTemplate.unitType.label}</label>
-                  <select
-                    id={unitTypeTemplate.unitType.fieldName}
-                    name={unitTypeTemplate.unitType.fieldName}
-                    onChange={handleUnitTypeChange}
-                    value={settings[unitTypeTemplate.unitType.fieldName]}
-                  >
+                  <label htmlFor={fieldName}>{label}</label>
+                  <select id={fieldName} name={fieldName} onChange={handleUnitTypeChange} value={settings[fieldName]}>
                     {UNIT_TYPE_SELECTION_TEMPLATE.map((unit) => {
                       return (
-                        <option key={`${unitTypeTemplate.unitType.fieldName}-${unit.value}`} value={unit.value}>
+                        <option
+                          key={`${fieldName}-${unit.value}`}
+                          value={unit.value}
+                          disabled={
+                            isSecondaryField
+                              ? settings.primaryUnit === unit.value
+                              : settings.secondaryUnit === unit.value
+                          }
+                        >
                           {unit.label}
                         </option>
                       )
@@ -56,14 +60,14 @@ export const Units: FC<SettingsCommonProps> = ({ handleInputChange, handleUnitTy
                 </div>
                 <div className={combineClassNames(styles.flex, styles.column, styles.spaceSM)}>
                   <label htmlFor={unitTypeTemplate.unitStep.fieldName}>{unitTypeTemplate.unitStep.label}</label>
-                  <div>
+                  <div className={combineClassNames(styles.flex, styles.spaceSM)}>
                     <input
                       type="range"
                       name={unitTypeTemplate.unitStep.fieldName}
                       value={settings[unitTypeTemplate.unitStep.fieldName]}
                       onChange={handleInputChange}
-                      min={UNITS_TYPES_PROPS.byType[settings[unitTypeTemplate.unitType.fieldName]].minStep}
-                      max={UNITS_TYPES_PROPS.byType[settings[unitTypeTemplate.unitType.fieldName]].maxStep}
+                      min={UNITS_TYPES_PROPS.byType[settings[fieldName]].minStep}
+                      max={UNITS_TYPES_PROPS.byType[settings[fieldName]].maxStep}
                     />
                     <input
                       type="number"
@@ -71,8 +75,8 @@ export const Units: FC<SettingsCommonProps> = ({ handleInputChange, handleUnitTy
                       name={unitTypeTemplate.unitStep.fieldName}
                       value={settings[unitTypeTemplate.unitStep.fieldName]}
                       onChange={handleInputChange}
-                      min={UNITS_TYPES_PROPS.byType[settings[unitTypeTemplate.unitType.fieldName]].minStep}
-                      max={UNITS_TYPES_PROPS.byType[settings[unitTypeTemplate.unitType.fieldName]].maxStep}
+                      min={UNITS_TYPES_PROPS.byType[settings[fieldName]].minStep}
+                      max={UNITS_TYPES_PROPS.byType[settings[fieldName]].maxStep}
                     />
                   </div>
                 </div>

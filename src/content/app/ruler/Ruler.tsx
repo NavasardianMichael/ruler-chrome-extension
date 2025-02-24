@@ -106,6 +106,12 @@ export const Ruler = () => {
         if (JSON.stringify(newValue) === JSON.stringify(oldValue)) return
         setSettings(newValue)
       }
+
+      if (areaName === 'local' && changes.ui) {
+        const { oldValue, newValue } = changes.ui
+        if (JSON.stringify(newValue) === JSON.stringify(oldValue)) return
+        setUI(newValue)
+      }
     })
   }, [])
 
@@ -178,19 +184,18 @@ export const Ruler = () => {
                   style={{
                     color: settings.color,
                     left: `calc(${stepNumber * settings.primaryUnitStep}${settings.primaryUnit} - 1px)`,
+                    fontSize: 16,
                   }}
                 >
-                  {stepNumber}
+                  {stepNumber * settings.primaryUnitStep}
                 </span>
               )
             })}
           </div>
 
-          <h1 className={styles.presentational} style={{ color: settings.color }}>
-            ©2025 | navasardianmichael@gmail.com
-          </h1>
-
-          <div className={combineClassNames(styles.axis, styles.secondary)} style={secondaryAxisStyle}></div>
+          {settings.showSecondaryUnit && (
+            <div className={combineClassNames(styles.axis, styles.secondary)} style={secondaryAxisStyle}></div>
+          )}
         </div>
       </div>
     </Draggable>

@@ -17,7 +17,6 @@ export const Toggle: FC<SettingsCommonProps> = ({ handleInputChange, settings })
           name={REST_FIELD_NAMES.toggleRuler}
           onChange={handleInputChange}
           checked={settings.toggleRuler}
-          value={settings.toggleRuler ? 'on' : 'off'}
         />
         <span className={styles.slider}></span>
       </div>

@@ -49,14 +49,14 @@ export const Settings = () => {
         (prev.primaryUnitStep < UNITS_TYPES_PROPS.byType[value].minStep ||
           prev.primaryUnitStep > UNITS_TYPES_PROPS.byType[value].maxStep)
       ) {
-        result.primaryUnitStep = UNITS_TYPES_PROPS.byType[value].minStep
+        result.primaryUnitStep = UNITS_TYPES_PROPS.byType[value].initialStep
       }
       if (
         isSecondary &&
         (prev.secondaryUnitStep < UNITS_TYPES_PROPS.byType[value].minStep ||
           prev.secondaryUnitStep > UNITS_TYPES_PROPS.byType[value].maxStep)
       ) {
-        result.secondaryUnitStep = UNITS_TYPES_PROPS.byType[value].minStep
+        result.secondaryUnitStep = UNITS_TYPES_PROPS.byType[value].initialStep
       }
       setStorageValue({ settings: result })
       return result

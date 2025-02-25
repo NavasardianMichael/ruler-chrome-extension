@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { SETTINGS_FORM_INITIAL_VALUES } from '_shared/constants/settings'
 import { UI_INITIAL_VALUES } from '_shared/constants/ui'
 import { getStorageValue, setStorageValue } from '_shared/functions/chromeStorage'
@@ -27,28 +27,28 @@ export const App = () => {
     })
   }, [])
 
-  useEffect(() => {
-    const toggleRuler = async () => {
-      const state: State = await chrome.storage.local.get()
-      const { settings, ui } = state
-      if (!settings && !ui) {
-        await setStorageValue({
-          settings: {
-            ...SETTINGS_FORM_INITIAL_VALUES,
-            toggleRuler: !(state?.settings?.toggleRuler ?? SETTINGS_FORM_INITIAL_VALUES.toggleRuler),
-          },
-          ui: UI_INITIAL_VALUES,
-        })
-      } else {
-        await setStorageValue({
-          settings: {
-            ...state.settings,
-            toggleRuler: !(state?.settings?.toggleRuler ?? SETTINGS_FORM_INITIAL_VALUES.toggleRuler),
-          },
-        })
-      }
+  const toggleRuler = useCallback(async () => {
+    const state: State = await chrome.storage.local.get()
+    const { settings, ui } = state
+    if (!settings && !ui) {
+      setStorageValue({
+        settings: {
+          ...SETTINGS_FORM_INITIAL_VALUES,
+          toggleRuler: !(state?.settings?.toggleRuler ?? SETTINGS_FORM_INITIAL_VALUES.toggleRuler),
+        },
+        ui: UI_INITIAL_VALUES,
+      })
+    } else {
+      setStorageValue({
+        settings: {
+          ...state.settings,
+          toggleRuler: !(state?.settings?.toggleRuler ?? SETTINGS_FORM_INITIAL_VALUES.toggleRuler),
+        },
+      })
     }
+  }, [])
 
+  useEffect(() => {
     const onKeyPress = (event: KeyboardEvent) => {
       if (!event.ctrlKey || event.key.toLowerCase() !== 'q') return
       toggleRuler()
@@ -63,5 +63,5 @@ export const App = () => {
 
   if (!isRulerShown) return null
 
-  return <Ruler />
+  return <Ruler toggleRuler={toggleRuler} />
 }

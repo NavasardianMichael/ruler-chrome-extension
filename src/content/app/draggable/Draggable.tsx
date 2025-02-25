@@ -23,9 +23,10 @@ interface DraggableContainerProps {
   children: ReactNode
   initialX?: number
   initialY?: number
+  toggleRuler: () => Promise<void>
 }
 
-export const Draggable: FC<DraggableContainerProps> = ({ children, initialX = 100, initialY = 100 }) => {
+export const Draggable: FC<DraggableContainerProps> = ({ children, toggleRuler, initialX = 100, initialY = 100 }) => {
   const [position, setPosition] = useState({ x: initialX, y: initialY })
   const [isDragging, setIsDragging] = useState(false)
   const [containerRotationDegree, setContainerRotationDegree] = useState(0)
@@ -152,6 +153,9 @@ export const Draggable: FC<DraggableContainerProps> = ({ children, initialX = 10
             return state
           case 'ArrowRight':
             state.x = prev.x + 1
+            return state
+          case 'Delete':
+            toggleRuler()
             return state
           default:
             return prev

@@ -1,9 +1,5 @@
-import { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import {
-  MIN_STEPS_NUMBERS_TO_PAINT,
-  SETTINGS_FORM_INITIAL_VALUES,
-  UNIT_CONVERSION_FACTORS_BY_PX,
-} from '_shared/constants/settings'
+import { CSSProperties, FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { SETTINGS_FORM_INITIAL_VALUES, UNIT_CONVERSION_FACTORS_BY_PX } from '_shared/constants/settings'
 import { UI_INITIAL_VALUES } from '_shared/constants/ui'
 import { getStorageValue, setStorageValue } from '_shared/functions/chromeStorage'
 import { combineClassNames } from '_shared/functions/commons'
@@ -12,7 +8,11 @@ import { UIState } from '_shared/types/ui'
 import { Draggable } from '../draggable/Draggable'
 import styles from './ruler.module.css'
 
-export const Ruler = () => {
+type Props = {
+  toggleRuler: () => Promise<void>
+}
+
+export const Ruler: FC<Props> = ({ toggleRuler }) => {
   const [settings, setSettings] = useState(SETTINGS_FORM_INITIAL_VALUES)
   const [ui, setUI] = useState(UI_INITIAL_VALUES)
   const [isSyncedWithChromeStorage, setIsSyncedWithChromeStorage] = useState(false)
@@ -121,20 +121,16 @@ export const Ruler = () => {
 
   const primaryUnitStepsToPaint = useMemo(() => {
     const stepsCount = Math.ceil(
-      ui.width /
-        UNIT_CONVERSION_FACTORS_BY_PX[settings.primaryUnit] /
-        Math.max(settings.primaryUnitStep, MIN_STEPS_NUMBERS_TO_PAINT[settings.primaryUnit])
+      ui.width / UNIT_CONVERSION_FACTORS_BY_PX[settings.primaryUnit] / settings.primaryUnitStep
     )
 
-    const steps = new Array(stepsCount)
-      .fill(undefined)
-      .map((_, i) => i * Math.max(settings.primaryUnitStep, MIN_STEPS_NUMBERS_TO_PAINT[settings.primaryUnit]))
+    const steps = new Array(stepsCount).fill(undefined).map((_, i) => i * settings.primaryUnitStep)
 
     return steps
   }, [settings.primaryUnit, settings.primaryUnitStep, ui.width])
 
   return (
-    <Draggable>
+    <Draggable toggleRuler={toggleRuler}>
       <div className={styles.container} hidden={!isSyncedWithChromeStorage}>
         <div
           ref={rulerElementRef}
@@ -158,7 +154,7 @@ export const Ruler = () => {
                   style={{
                     color: settings.color,
                     left: `calc(${stepNumber}${settings.primaryUnit} - 1px)`,
-                    fontSize: 16,
+                    fontSize: 14,
                   }}
                 >
                   {index ? stepNumber : index}

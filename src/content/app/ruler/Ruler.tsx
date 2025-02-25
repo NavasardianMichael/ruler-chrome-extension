@@ -1,5 +1,9 @@
 import { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { SETTINGS_FORM_INITIAL_VALUES, UNIT_CONVERSION_FACTORS_BY_PX } from '_shared/constants/settings'
+import {
+  MIN_STEPS_NUMBERS_TO_PAINT,
+  SETTINGS_FORM_INITIAL_VALUES,
+  UNIT_CONVERSION_FACTORS_BY_PX,
+} from '_shared/constants/settings'
 import { UI_INITIAL_VALUES } from '_shared/constants/ui'
 import { getStorageValue, setStorageValue } from '_shared/functions/chromeStorage'
 import { combineClassNames } from '_shared/functions/commons'
@@ -117,11 +121,14 @@ export const Ruler = () => {
 
   const primaryUnitStepsToPaint = useMemo(() => {
     const stepsCount = Math.ceil(
-      ui.width / UNIT_CONVERSION_FACTORS_BY_PX[settings.primaryUnit] / settings.primaryUnitStep
+      ui.width /
+        UNIT_CONVERSION_FACTORS_BY_PX[settings.primaryUnit] /
+        Math.max(settings.primaryUnitStep, MIN_STEPS_NUMBERS_TO_PAINT[settings.primaryUnit])
     )
 
-    const steps = new Array(stepsCount).fill(undefined).map((_, i) => i * settings.primaryUnitStep)
-    console.log({ steps })
+    const steps = new Array(stepsCount)
+      .fill(undefined)
+      .map((_, i) => i * Math.max(settings.primaryUnitStep, MIN_STEPS_NUMBERS_TO_PAINT[settings.primaryUnit]))
 
     return steps
   }, [settings.primaryUnit, settings.primaryUnitStep, ui.width])

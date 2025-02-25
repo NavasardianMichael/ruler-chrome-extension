@@ -74,6 +74,8 @@ export const Draggable: FC<DraggableContainerProps> = ({ children, initialX = 10
   }, [])
 
   const handleMouseDown = (e: MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation()
+
     const rect = draggableRef?.current?.getBoundingClientRect()
     if (!rect) return
 
@@ -132,7 +134,8 @@ export const Draggable: FC<DraggableContainerProps> = ({ children, initialX = 10
 
   useEffect(() => {
     const handleKeyDown = async (event: KeyboardEvent) => {
-      console.log(event)
+      event.preventDefault()
+      event.stopImmediatePropagation()
 
       let state = { x: 0, y: 0 }
       setPosition((prev) => {
@@ -187,13 +190,10 @@ export const Draggable: FC<DraggableContainerProps> = ({ children, initialX = 10
   )
 
   const handleFocus = () => {
-    console.log('focuysed')
-
     setIsFocused(true)
   }
 
   const handleBlur = () => {
-    console.log('blurred')
     setIsFocused(false)
   }
 

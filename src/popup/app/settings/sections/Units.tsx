@@ -28,8 +28,7 @@ export const Units: FC<SettingsCommonProps> = ({ handleInputChange, handleUnitTy
                   name={REST_FIELD_NAMES.showSecondaryUnit}
                   onChange={handleInputChange}
                   checked={settings.showSecondaryUnit}
-                  value={settings.secondaryUnit}
-                ></input>
+                />
                 <label htmlFor={REST_FIELD_NAMES.showSecondaryUnit}>
                   {REST_FIELDS_TEMPLATES.showSecondaryUnit.label}
                 </label>
@@ -49,7 +48,7 @@ export const Units: FC<SettingsCommonProps> = ({ handleInputChange, handleUnitTy
                           disabled={
                             isSecondaryField
                               ? settings.primaryUnit === unit.value
-                              : settings.secondaryUnit === unit.value
+                              : settings.showSecondaryUnit && settings.secondaryUnit === unit.value
                           }
                         >
                           {unit.label}

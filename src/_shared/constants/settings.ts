@@ -57,7 +57,7 @@ export const MIN_STEPS_NUMBERS_TO_PAINT: Record<UnitType, number> = {
   cm: 1,
   in: 1,
   pt: 50,
-  px: 50,
+  px: 36,
 }
 
 export const ROTATION_DEGREE_PROPS = {

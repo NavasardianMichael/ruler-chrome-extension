@@ -2,4 +2,17 @@
   position: fixed;
   z-index: 9999;
   cursor: move;
+  border-radius: var(--ruler-extension-css-vars-space-xs);
+
+  &:hover {
+    box-shadow: lightgray 0px 0px 24px;
+  }
+
+  &:focus {
+    box-shadow: var(--ruler-extension-css-vars-border-focus-color) 0px 0px 4px 2px;
+  }
+
+  &:focus-visible {
+    outline: none;
+  }
 }

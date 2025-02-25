@@ -1,9 +1,11 @@
 import { ChangeEventHandler, MouseEventHandler, useCallback, useEffect, useMemo, useState } from 'react'
 import {
   BINARY_FIELD_NAMES,
+  REST_FIELD_NAMES,
   SETTINGS_FORM_INITIAL_VALUES,
   UNITS_TYPES_PROPS,
   UNIT_TYPE_FIELD_NAMES,
+  UNIT_TYPE_SELECTION_TEMPLATE,
 } from '_shared/constants/settings'
 import { UI_INITIAL_VALUES } from '_shared/constants/ui'
 import { getStorageValue, setStorageValue } from '_shared/functions/chromeStorage'
@@ -61,17 +63,29 @@ export const Settings = () => {
     })
   }, [])
 
-  const handleInputChange: ChangeEventHandler<HTMLInputElement> = useCallback((event) => {
-    const { name, value } = event.target
-    setSettings((prev) => {
-      const newState = {
-        ...prev,
-        [name]: BINARY_FIELD_NAMES.includes(name as BinaryFieldName) ? !prev[name as BinaryFieldName] : value,
-      }
-      setStorageValue({ settings: newState })
-      return newState
-    })
-  }, [])
+  const handleInputChange: ChangeEventHandler<HTMLInputElement> = useCallback(
+    (event) => {
+      const { name, value } = event.target
+
+      setSettings((prev) => {
+        const newState = {
+          ...prev,
+          [name]: BINARY_FIELD_NAMES.includes(name as BinaryFieldName) ? !prev[name as BinaryFieldName] : value,
+        }
+        if (
+          name === REST_FIELD_NAMES.showSecondaryUnit &&
+          !prev.showSecondaryUnit &&
+          settings.primaryUnit === settings.secondaryUnit
+        ) {
+          const randomUnit = UNIT_TYPE_SELECTION_TEMPLATE.find((unit) => unit.value !== settings.primaryUnit)
+          if (randomUnit) newState.secondaryUnit = randomUnit.value
+        }
+        setStorageValue({ settings: newState })
+        return newState
+      })
+    },
+    [settings.primaryUnit, settings.secondaryUnit]
+  )
 
   const commonsProps = useMemo(() => {
     return {

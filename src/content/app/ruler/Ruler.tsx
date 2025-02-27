@@ -102,7 +102,7 @@ export const Ruler: FC<Props> = ({ toggleRuler }) => {
         repeating-linear-gradient(
           to right, 
           ${color} 0px 1px, 
-          transparent 1px ${settings.primaryUnitStep}${settings.primaryUnit})
+          transparent 1px ${settings.primaryUnitStep * UNIT_CONVERSION_FACTORS_BY_PX[settings.primaryUnit]}px)
       `,
     }
   }, [settings])
@@ -114,7 +114,7 @@ export const Ruler: FC<Props> = ({ toggleRuler }) => {
         repeating-linear-gradient(
           to right, 
           ${color} 0px 1px, 
-          transparent 1px ${settings.secondaryUnitStep}${settings.secondaryUnit})
+          transparent 1px ${settings.secondaryUnitStep * UNIT_CONVERSION_FACTORS_BY_PX[settings.secondaryUnit]}px)
       `,
     }
   }, [settings])
@@ -123,15 +123,26 @@ export const Ruler: FC<Props> = ({ toggleRuler }) => {
     const stepsCount = Math.ceil(
       ui.width / UNIT_CONVERSION_FACTORS_BY_PX[settings.primaryUnit] / settings.primaryUnitStep
     )
+    console.log({ dd: UNIT_CONVERSION_FACTORS_BY_PX[settings.primaryUnit] })
 
     const steps = new Array(stepsCount).fill(undefined).map((_, i) => i * settings.primaryUnitStep)
 
     return steps
   }, [settings.primaryUnit, settings.primaryUnitStep, ui.width])
 
+  // const [scale, setScale] = useState(1 + Math.abs(1 - window.devicePixelRatio))
+
+  // useEffect(() => {
+  //   window.addEventListener('resize', () => {
+  //     console.log({ pr: 1 - window.devicePixelRatio })
+
+  //     setScale(1 + (1 - window.devicePixelRatio))
+  //   })
+  // }, [])
+
   return (
     <Draggable toggleRuler={toggleRuler}>
-      <div className={styles.container} hidden={!isSyncedWithChromeStorage}>
+      <div className={styles.container} /*style={{ scale }}*/ hidden={!isSyncedWithChromeStorage}>
         <div
           ref={rulerElementRef}
           className={combineClassNames(
@@ -153,7 +164,7 @@ export const Ruler: FC<Props> = ({ toggleRuler }) => {
                   className={styles.step}
                   style={{
                     color: settings.color,
-                    left: `calc(${stepNumber}${settings.primaryUnit} - 1px)`,
+                    left: `calc(${(index ? stepNumber : index) * UNIT_CONVERSION_FACTORS_BY_PX[settings.primaryUnit]}px - 1px)`,
                     fontSize: 14,
                   }}
                 >

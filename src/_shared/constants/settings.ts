@@ -8,12 +8,21 @@ export const UNIT_TYPES = {
   px: 'px',
 } as const
 
+const checkUnitTypeRatioToPx = (unitType: UnitType): number => {
+  const precisionFactor = 1000
+  const tempElement = document.createElement('div')
+  tempElement.style.width = `${precisionFactor}${unitType}`
+  document.body.appendChild(tempElement)
+  const widthIndPx = tempElement.getBoundingClientRect().width
+  return widthIndPx / precisionFactor
+}
+
 export const UNIT_CONVERSION_FACTORS_BY_PX: Record<UnitType, number> = {
-  mm: 96 / 25.4, // Base unit
-  cm: (96 / 25.4) * 10, // 1 cm = 10 mm
-  in: 96, // 1 inch = 25.4 mm
-  pt: 96 / 72, // 1 point = 0.3528 mm
-  px: 1, // 1 pixel ≈ 0.2646 mm (based on 96 DPI)
+  mm: checkUnitTypeRatioToPx('mm'),
+  cm: checkUnitTypeRatioToPx('cm'),
+  in: checkUnitTypeRatioToPx('in'),
+  pt: checkUnitTypeRatioToPx('pt'),
+  px: 1,
 }
 
 export const UNITS_TYPES_PROPS = {

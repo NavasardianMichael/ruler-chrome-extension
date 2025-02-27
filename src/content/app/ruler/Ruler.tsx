@@ -101,7 +101,7 @@ export const Ruler: FC<Props> = ({ toggleRuler }) => {
       background: `
         repeating-linear-gradient(
           to right, 
-          ${color} 0px 1px, 
+          ${color} 0 1px, 
           transparent 1px ${settings.primaryUnitStep * UNIT_CONVERSION_FACTORS_BY_PX[settings.primaryUnit]}px)
       `,
     }
@@ -113,7 +113,7 @@ export const Ruler: FC<Props> = ({ toggleRuler }) => {
       background: `
         repeating-linear-gradient(
           to right, 
-          ${color} 0px 1px, 
+          ${color} 0 1px, 
           transparent 1px ${settings.secondaryUnitStep * UNIT_CONVERSION_FACTORS_BY_PX[settings.secondaryUnit]}px)
       `,
     }
@@ -123,7 +123,6 @@ export const Ruler: FC<Props> = ({ toggleRuler }) => {
     const stepsCount = Math.ceil(
       ui.width / UNIT_CONVERSION_FACTORS_BY_PX[settings.primaryUnit] / settings.primaryUnitStep
     )
-    console.log({ dd: UNIT_CONVERSION_FACTORS_BY_PX[settings.primaryUnit] })
 
     const steps = new Array(stepsCount).fill(undefined).map((_, i) => i * settings.primaryUnitStep)
 

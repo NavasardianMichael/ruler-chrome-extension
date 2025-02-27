@@ -1,7 +1,8 @@
-import { CSSProperties, FC, MouseEvent, ReactNode, useEffect, useMemo, useRef, useState } from 'react'
-import { SETTINGS_FORM_INITIAL_VALUES } from '_shared/constants/settings'
+import { CSSProperties, FC, MouseEvent, ReactNode, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { SETTINGS_FORM_INITIAL_VALUES, UNIT_CONVERSION_FACTORS_BY_PX } from '_shared/constants/settings'
 import { UI_INITIAL_VALUES } from '_shared/constants/ui'
 import { getStorageValue, setStorageValue } from '_shared/functions/chromeStorage'
+import { UnitType } from '_shared/types/settings'
 import { State } from '_shared/types/state'
 import { UIState } from '_shared/types/ui'
 import styles from './draggable.module.css'
@@ -26,17 +27,19 @@ interface DraggableContainerProps {
   toggleRuler: () => Promise<void>
 }
 
+const RESIZE_HANDLE_SIZE = 16
+
 export const Draggable: FC<DraggableContainerProps> = ({ children, toggleRuler, initialX = 100, initialY = 100 }) => {
   const [position, setPosition] = useState({ x: initialX, y: initialY })
   const [isDragging, setIsDragging] = useState(false)
   const [containerRotationDegree, setContainerRotationDegree] = useState(0)
+  const [primaryUnit, setPrimaryUnit] = useState<UnitType | null>(null)
   const [isSyncedWithChromeStorage, setIsSyncedWithChromeStorage] = useState(false)
   const [isFocused, setIsFocused] = useState(false)
   const dragOffset = useRef({ x: 0, y: 0 })
-  const RESIZE_HANDLE_SIZE = 16
   const draggableRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!chrome.storage) return
 
     const sync = async () => {
@@ -51,6 +54,7 @@ export const Draggable: FC<DraggableContainerProps> = ({ children, toggleRuler, 
           y: ui?.top ?? UI_INITIAL_VALUES.top,
         })
       }
+      setPrimaryUnit(settings.primaryUnit)
       setIsSyncedWithChromeStorage(true)
     }
 
@@ -74,13 +78,21 @@ export const Draggable: FC<DraggableContainerProps> = ({ children, toggleRuler, 
     })
   }, [])
 
+  const scale = useMemo(() => {
+    if (!primaryUnit) console.warn('primaryUnit missing')
+    console.log({ primaryUnit })
+
+    return 1 - 1 / UNIT_CONVERSION_FACTORS_BY_PX[primaryUnit!]
+  }, [primaryUnit])
+
   const handleMouseDown = (e: MouseEvent<HTMLDivElement>) => {
     e.stopPropagation()
 
     const rect = draggableRef?.current?.getBoundingClientRect()
     if (!rect) return
 
-    const isInResizeArea = e.clientX > rect.right - RESIZE_HANDLE_SIZE && e.clientY > rect.bottom - RESIZE_HANDLE_SIZE
+    const isInResizeArea =
+      e.clientX > rect.right - RESIZE_HANDLE_SIZE * scale && e.clientY > rect.bottom - RESIZE_HANDLE_SIZE * scale
 
     if (isInResizeArea) {
       return
@@ -182,15 +194,16 @@ export const Draggable: FC<DraggableContainerProps> = ({ children, toggleRuler, 
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [isFocused])
+  }, [isFocused, toggleRuler])
 
   const containerStyle: CSSProperties = useMemo(
     () => ({
       left: position.x,
       top: position.y,
-      transform: `rotate(${containerRotationDegree}deg)`,
+      rotate: `(${containerRotationDegree}deg)`,
+      scale,
     }),
-    [containerRotationDegree, position.x, position.y]
+    [containerRotationDegree, position.x, position.y, scale]
   )
 
   const handleFocus = () => {
@@ -204,10 +217,10 @@ export const Draggable: FC<DraggableContainerProps> = ({ children, toggleRuler, 
   return (
     <div
       ref={draggableRef}
-      style={containerStyle}
       className={styles.draggable}
+      style={containerStyle}
       onMouseDown={handleMouseDown}
-      hidden={!isSyncedWithChromeStorage}
+      hidden={!isSyncedWithChromeStorage || !scale}
       onFocus={handleFocus}
       onBlur={handleBlur}
       tabIndex={0}

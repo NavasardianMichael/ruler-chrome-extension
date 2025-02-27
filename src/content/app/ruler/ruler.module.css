@@ -6,6 +6,14 @@
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   font-size: var(--ruler-extension-css-vars-space-md);
 
+  &:hover {
+    box-shadow: lightgray 0px 0px 24px;
+  }
+
+  &:focus {
+    box-shadow: var(--ruler-extension-css-vars-border-focus-color) 0px 0px 4px 2px;
+  }
+
   &:focus-visible {
     outline: none;
   }

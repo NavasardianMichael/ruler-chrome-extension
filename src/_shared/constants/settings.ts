@@ -14,6 +14,7 @@ const checkUnitTypeRatioToPx = (unitType: UnitType): number => {
   tempElement.style.width = `${precisionFactor}${unitType}`
   document.body.appendChild(tempElement)
   const widthIndPx = tempElement.getBoundingClientRect().width
+  tempElement.remove()
   return widthIndPx / precisionFactor
 }
 

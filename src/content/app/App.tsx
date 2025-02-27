@@ -59,7 +59,7 @@ export const App = () => {
     return () => {
       document.removeEventListener('keyup', onKeyPress)
     }
-  }, [])
+  }, [toggleRuler])
 
   if (!isRulerShown) return null
 

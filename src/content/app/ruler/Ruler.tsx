@@ -1,59 +1,46 @@
-import { CSSProperties, FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { SETTINGS_FORM_INITIAL_VALUES, UNIT_CONVERSION_FACTORS_BY_PX } from '_shared/constants/settings'
-import { UI_INITIAL_VALUES } from '_shared/constants/ui'
-import { getStorageValue, setStorageValue } from '_shared/functions/chromeStorage'
+import { CSSProperties, FC, useEffect, useMemo, useRef } from 'react'
+import { RULER_SIZINGS } from '_shared/constants/ui'
 import { combineClassNames } from '_shared/functions/commons'
-import { SettingsState } from '_shared/types/settings'
-import { UIState } from '_shared/types/ui'
+import { checkUnitTypeRatioToPx } from '_shared/functions/units'
+import { State } from '_shared/types/state'
+import { Setters } from '../App'
 import { Draggable } from '../draggable/Draggable'
 import styles from './ruler.module.css'
 
-type Props = {
-  toggleRuler: () => Promise<void>
+export type AppProps = {
+  state: State
+  setters: Setters
 }
 
-export const Ruler: FC<Props> = ({ toggleRuler }) => {
-  const [settings, setSettings] = useState(SETTINGS_FORM_INITIAL_VALUES)
-  const [ui, setUI] = useState(UI_INITIAL_VALUES)
-  const [isSyncedWithChromeStorage, setIsSyncedWithChromeStorage] = useState(false)
+export const Ruler: FC<AppProps> = ({ setters, state }) => {
+  const { settings, ui } = state
+  const { setUI } = setters
 
-  const rulerElementRef = useRef<HTMLDivElement>(null)
+  const rulerContainerRef = useRef<HTMLDivElement>(null)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
 
-  const setUIProps = useCallback((newProps: Partial<typeof ui>) => {
-    setUI((prev) => {
-      const newState = {
-        ...prev,
-        ...newProps,
-      }
-      if (JSON.stringify(newState) === JSON.stringify(prev)) return prev
-      setStorageValue({ ui: newState })
-      return newState
-    })
-  }, [])
-
-  useEffect(() => {
-    const syncChromeStorageToLocalState = async () => {
-      const settingsFromStorage = await getStorageValue<SettingsState>('settings')
-      const uiFromStorage = await getStorageValue<UIState>('ui')
-      setSettings({ ...SETTINGS_FORM_INITIAL_VALUES, ...settingsFromStorage })
-      setUI({ ...UI_INITIAL_VALUES, ...uiFromStorage })
-      setIsSyncedWithChromeStorage(true)
-    }
-    syncChromeStorageToLocalState()
-  }, [])
+  const unitByPx = useMemo(
+    () => ({
+      mm: checkUnitTypeRatioToPx('mm'),
+      cm: checkUnitTypeRatioToPx('cm'),
+      in: checkUnitTypeRatioToPx('in'),
+      pt: checkUnitTypeRatioToPx('pt'),
+      px: 1,
+    }),
+    []
+  )
 
   useEffect(() => {
-    if (!ui.height || !ui.width || !rulerElementRef.current) return
-    if (!isSyncedWithChromeStorage) return
+    if (!ui.height || !ui.width || !rulerContainerRef.current) return
 
     const observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
         const { width, height } = entry.contentRect
         if (!width || !height) return
+
         setTimeout(() => {
           if (Math.floor(width) === ui.width && Math.floor(height) === ui.height) return
-
-          setUIProps({
+          setUI({
             height: Math.floor(height),
             width: Math.floor(width),
           })
@@ -61,127 +48,123 @@ export const Ruler: FC<Props> = ({ toggleRuler }) => {
       }
     })
 
-    observer.observe(rulerElementRef.current as HTMLDivElement)
+    observer.observe(rulerContainerRef.current)
 
     return () => {
-      observer?.disconnect()
+      observer.disconnect()
     }
-  }, [isSyncedWithChromeStorage, setUIProps, ui.height, ui.width])
+  }, [setUI, ui.height, ui.width])
 
   useEffect(() => {
-    if (!chrome.storage) return
-    chrome.storage.onChanged.addListener((changes, areaName) => {
-      if (areaName === 'local' && changes.settings) {
-        const { oldValue, newValue } = changes.settings
-        if (JSON.stringify(newValue) === JSON.stringify(oldValue)) return
-        setSettings(newValue)
-      }
+    if (!canvasRef.current) return
+    if (!ui.width || !ui.height) return
 
-      if (areaName === 'local' && changes.ui) {
-        const { oldValue, newValue } = changes.ui
-        if (JSON.stringify(newValue) === JSON.stringify(oldValue)) return
-        setUI(newValue)
-      }
-    })
-  }, [])
+    const canvas = canvasRef.current
+    const ctx = canvas.getContext('2d', { alpha: false })
+    if (!ctx) return
 
+    // Handle devicePixelRatio for crisp lines/text.
+    const dpr = window.devicePixelRatio || 1
+
+    // Set the actual pixel size of the canvas
+    canvas.width = ui.width * dpr
+    canvas.height = ui.height * dpr
+
+    // Style width/height so it appears the correct size in the layout
+    canvas.style.width = ui.width + 'px'
+    canvas.style.height = ui.height + 'px'
+
+    // Scale the drawing context so everything lines up to CSS pixels
+    ctx.scale(dpr, dpr)
+
+    // Fill background
+    ctx.fillStyle = settings.backgroundColor
+    ctx.fillRect(0, 0, ui.width, ui.height)
+
+    // Outline with radius
+    // ctx.strokeStyle = settings.color
+    // ctx.lineWidth = 1
+    // ctx.strokeRect(0, 0, ui.width, ui.height)
+
+    // Draw the "primary" axis lines
+    const primaryStepPx = Math.round(settings.primaryUnitStep * unitByPx[settings.primaryUnit])
+    ctx.fillStyle = settings.color
+    ctx.font = '14px Inter, system-ui, Avenir, Helvetica, Arial, sans-serif'
+
+    ctx.beginPath()
+    for (let x = RULER_SIZINGS.marginLeft; x <= ui.width; x += primaryStepPx) {
+      ctx.moveTo(x, 0)
+      ctx.lineTo(x, RULER_SIZINGS.primaryUnitHeight)
+    }
+    ctx.strokeStyle = settings.color
+    ctx.stroke()
+
+    // Draw numeric labels for primary axis
+    // Some padding from top if desired
+    for (let i = 0; i * primaryStepPx <= ui.width; i++) {
+      const x = i * primaryStepPx
+      // i === 0 => label "0", else label i * step
+      const label = i === 0 ? '0' : String(i * settings.primaryUnitStep)
+      ctx.fillText(label, x + RULER_SIZINGS.marginLeft - label.length * 4, RULER_SIZINGS.primaryStepOffsetTop)
+    }
+
+    // If we show the secondary unit, draw those lines in the same color or slightly distinct
+    if (settings.showSecondaryUnit) {
+      const secondaryStepPx = Math.round(settings.secondaryUnitStep * unitByPx[settings.secondaryUnit])
+
+      ctx.beginPath()
+      for (let x = RULER_SIZINGS.marginLeft; x <= ui.width; x += secondaryStepPx) {
+        ctx.moveTo(x, 0)
+        ctx.lineTo(x, RULER_SIZINGS.secondaryUnitHeight)
+      }
+      // Could optionally use a different strokeStyle if you want them distinct
+      ctx.strokeStyle = settings.color
+      ctx.stroke()
+    }
+
+    // Lastly, show unit labels in bottom-left corner or anywhere you like
+    const unitsLabel = settings.showSecondaryUnit
+      ? `${settings.primaryUnit} (${settings.secondaryUnit})`
+      : settings.primaryUnit
+    ctx.fillText(unitsLabel, RULER_SIZINGS.marginLeft, ui.height - RULER_SIZINGS.unitsInfoOffsetBottom)
+
+    ctx.translate(0.5, 0.5)
+    ctx.translate(-0.5, -0.5)
+  }, [
+    ui.width,
+    ui.height,
+    settings.color,
+    settings.backgroundColor,
+    settings.primaryUnit,
+    settings.primaryUnitStep,
+    settings.secondaryUnit,
+    settings.secondaryUnitStep,
+    settings.showSecondaryUnit,
+    unitByPx,
+  ])
+
+  // Same style for the container as before (minus the background references).
   const rulerStyle: CSSProperties = useMemo(() => {
     return {
       width: ui.width,
       height: ui.height,
-      backgroundColor: settings.backgroundColor,
-      color: settings.color,
+      // background: 'transparent',
       outlineColor: settings.color,
     }
-  }, [settings.color, settings.backgroundColor, ui.height, ui.width])
-
-  const primaryAxisStyle: CSSProperties = useMemo(() => {
-    const color = settings.color
-    return {
-      background: `
-        repeating-linear-gradient(
-          to right, 
-          ${color} 0 1px, 
-          transparent 1px ${settings.primaryUnitStep * UNIT_CONVERSION_FACTORS_BY_PX[settings.primaryUnit]}px)
-      `,
-    }
-  }, [settings])
-
-  const secondaryAxisStyle: CSSProperties = useMemo(() => {
-    const color = settings.color
-    return {
-      background: `
-        repeating-linear-gradient(
-          to right, 
-          ${color} 0 1px, 
-          transparent 1px ${settings.secondaryUnitStep * UNIT_CONVERSION_FACTORS_BY_PX[settings.secondaryUnit]}px)
-      `,
-    }
-  }, [settings])
-
-  const primaryUnitStepsToPaint = useMemo(() => {
-    const stepsCount = Math.ceil(
-      ui.width / UNIT_CONVERSION_FACTORS_BY_PX[settings.primaryUnit] / settings.primaryUnitStep
-    )
-
-    const steps = new Array(stepsCount).fill(undefined).map((_, i) => i * settings.primaryUnitStep)
-
-    return steps
-  }, [settings.primaryUnit, settings.primaryUnitStep, ui.width])
-
-  // const [scale, setScale] = useState(1 + Math.abs(1 - window.devicePixelRatio))
-
-  // useEffect(() => {
-  //   window.addEventListener('resize', () => {
-  //     console.log({ pr: 1 - window.devicePixelRatio })
-
-  //     setScale(1 + (1 - window.devicePixelRatio))
-  //   })
-  // }, [])
+  }, [settings.color, ui.height, ui.width])
 
   return (
-    <Draggable toggleRuler={toggleRuler}>
-      <div className={styles.container} /*style={{ scale }}*/ hidden={!isSyncedWithChromeStorage}>
+    <Draggable state={state} setters={setters}>
+      <div className={styles.container}>
         <div
-          ref={rulerElementRef}
+          ref={rulerContainerRef}
           className={combineClassNames(
             styles.ruler,
             +settings.rotationDegree !== 0 && +settings.rotationDegree !== 360 && styles.resizingDisabled
           )}
           style={rulerStyle}
         >
-          <div className={combineClassNames(styles.axis, styles.primary)} style={primaryAxisStyle}></div>
-
-          <div
-            className={combineClassNames(styles.steps)}
-            style={{ gap: `calc(${settings.primaryUnitStep}${settings.primaryUnit} - 1px)` }}
-          >
-            {primaryUnitStepsToPaint.map((stepNumber, index) => {
-              return (
-                <span
-                  key={stepNumber}
-                  className={styles.step}
-                  style={{
-                    color: settings.color,
-                    left: `calc(${(index ? stepNumber : index) * UNIT_CONVERSION_FACTORS_BY_PX[settings.primaryUnit]}px - 1px)`,
-                    fontSize: 14,
-                  }}
-                >
-                  {index ? stepNumber : index}
-                </span>
-              )
-            })}
-          </div>
-
-          <div className={styles.units} style={{ fontSize: 14 }}>
-            {settings.primaryUnit}
-            {` `}
-            {settings.showSecondaryUnit && `(${settings.secondaryUnit})`}
-          </div>
-
-          {settings.showSecondaryUnit && (
-            <div className={combineClassNames(styles.axis, styles.secondary)} style={secondaryAxisStyle}></div>
-          )}
+          <canvas ref={canvasRef} />
         </div>
       </div>
     </Draggable>

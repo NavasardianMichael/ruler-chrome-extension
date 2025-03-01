@@ -8,24 +8,6 @@ export const UNIT_TYPES = {
   px: 'px',
 } as const
 
-const checkUnitTypeRatioToPx = (unitType: UnitType): number => {
-  const precisionFactor = 1000
-  const tempElement = document.createElement('div')
-  tempElement.style.width = `${precisionFactor}${unitType}`
-  document.body.appendChild(tempElement)
-  const widthIndPx = tempElement.getBoundingClientRect().width
-  tempElement.remove()
-  return widthIndPx / precisionFactor
-}
-
-export const UNIT_CONVERSION_FACTORS_BY_PX: Record<UnitType, number> = {
-  mm: checkUnitTypeRatioToPx('mm'),
-  cm: checkUnitTypeRatioToPx('cm'),
-  in: checkUnitTypeRatioToPx('in'),
-  pt: checkUnitTypeRatioToPx('pt'),
-  px: 1,
-}
-
 export const UNITS_TYPES_PROPS = {
   byType: {
     [UNIT_TYPES.mm]: {

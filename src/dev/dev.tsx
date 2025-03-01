@@ -1,9 +1,9 @@
 import { createRoot } from 'react-dom/client'
-import { App } from './app/App'
+import { App } from './App'
 
 function initReactApp() {
   const container = document.createElement('div')
-  container.id = 'ruler-extension-root'
+  container.id = 'ruler-extension-dev-root'
 
   document.body.appendChild(container)
 

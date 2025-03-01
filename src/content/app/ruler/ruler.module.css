@@ -1,82 +1,19 @@
 @import '../../../_shared/styles/variables.css';
 
 .container {
-  position: relative;
-  z-index: 9999 !important;
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  font-size: var(--ruler-extension-css-vars-space-md);
-
-  &:hover {
-    box-shadow: lightgray 0px 0px 24px;
-  }
-
-  &:focus {
-    box-shadow: var(--ruler-extension-css-vars-border-focus-color) 0px 0px 4px 2px;
-  }
-
-  &:focus-visible {
-    outline: none;
-  }
-
   .ruler {
-    display: flex;
-    flex-direction: column;
-    gap: var(--ruler-extension-css-vars-space-sm);
-
-    outline-style: solid;
-    outline-width: 1px;
-    border-radius: var(--ruler-extension-css-vars-space-xs);
-    box-sizing: border-box;
-
-    overflow: hidden;
-    transition: opacity 0.1s;
-    user-select: none;
-    position: relative;
     min-width: 11cm;
     max-width: 51cm;
     min-height: 116px;
     max-height: 300px;
+    overflow: hidden;
+
+    outline-style: solid;
+    outline-width: 1px;
+    border-radius: var(--ruler-extension-css-vars-space-xs);
 
     &:not(.resizingDisabled) {
       resize: both;
-    }
-
-    .axis,
-    .steps {
-      margin-left: var(--ruler-extension-css-vars-space-xlg);
-    }
-
-    .axis {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-
-      &.primary {
-        height: 60px;
-      }
-
-      &.secondary {
-        height: 40px;
-      }
-    }
-
-    .units {
-      position: absolute;
-      top: 88px;
-      left: var(--ruler-extension-css-vars-space-lg);
-      opacity: 0.5;
-    }
-
-    .steps {
-      display: flex;
-      position: relative;
-
-      .step {
-        position: absolute;
-        transform: translateX(calc(-50% + 1px));
-        top: 60px;
-      }
     }
   }
 }

@@ -1,11 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { SETTINGS_FORM_INITIAL_VALUES } from '_shared/constants/settings'
 import { UI_INITIAL_VALUES } from '_shared/constants/ui'
-import { setStorageValue } from '_shared/functions/chromeStorage'
+import { Ruler } from 'content/app/ruler/Ruler'
 import { SettingsState } from '_shared/types/settings'
 import { UIState } from '_shared/types/ui'
-import { Ruler } from './ruler/Ruler'
-import { useSyncWithChromeStorage } from './useSyncWithChromeStorage'
 
 export type Setters = {
   setSettings: (newSettings: Partial<SettingsState>) => void
@@ -15,29 +13,14 @@ export type Setters = {
 export const App = () => {
   const [settings, setSettings] = useState(SETTINGS_FORM_INITIAL_VALUES)
   const [ui, setUI] = useState(UI_INITIAL_VALUES)
-  const [isSyncedWithChromeStorage, setIsSyncedWithChromeStorage] = useState(false)
 
   const setters = useMemo(() => {
     return {
       setSettings: (newSettings: Partial<SettingsState>) => {
-        setSettings((prev) => {
-          const newState: SettingsState = {
-            ...prev,
-            ...newSettings,
-          }
-          setStorageValue({ settings: newState })
-          return newState
-        })
+        return setSettings((prev) => ({ ...prev, ...newSettings }))
       },
       setUI: (newUI: Partial<UIState>) => {
-        setUI((prev) => {
-          const newState: UIState = {
-            ...prev,
-            ...newUI,
-          }
-          setStorageValue({ ui: newState })
-          return newState
-        })
+        return setUI((prev) => ({ ...prev, ...newUI }))
       },
     }
   }, [])
@@ -45,8 +28,6 @@ export const App = () => {
   const state = useMemo(() => {
     return { settings, ui }
   }, [settings, ui])
-
-  useSyncWithChromeStorage(setters, setIsSyncedWithChromeStorage)
 
   useEffect(() => {
     const onKeyPress = (event: KeyboardEvent) => {
@@ -64,8 +45,7 @@ export const App = () => {
   }, [setSettings, setters, settings.toggleRuler, state.settings.toggleRuler])
 
   console.log(settings.toggleRuler)
-
-  if (!settings.toggleRuler || !isSyncedWithChromeStorage) return null
+  if (!settings.toggleRuler) return null
 
   return <Ruler state={state} setters={setters} />
 }

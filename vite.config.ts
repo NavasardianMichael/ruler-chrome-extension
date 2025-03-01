@@ -5,20 +5,22 @@ import svgr from 'vite-plugin-svgr'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import manifest from './src/manifest'
 
-export default defineConfig({
-  plugins: [
-    react(),
-    crx({ manifest }),
-    tsconfigPaths(),
-    svgr({
-      include: '**/*.svg',
-    }),
-  ],
-  build: {
-    sourcemap: true,
-  },
-  server: {
-    port: 5575,
-    open: true,
-  },
+export default defineConfig((config) => {
+  const isProd = config.mode === 'production'
+  return {
+    plugins: [
+      react(),
+      isProd && crx({ manifest }),
+      tsconfigPaths(),
+      svgr({
+        include: '**/*.svg',
+      }),
+    ],
+    build: {
+      sourcemap: true,
+    },
+    server: {
+      open: true,
+    },
+  }
 })

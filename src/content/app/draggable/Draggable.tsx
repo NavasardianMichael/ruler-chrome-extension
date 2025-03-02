@@ -99,7 +99,7 @@ export const Draggable: FC<Props> = ({ state, setters, children }) => {
           state.left += 1
           break
         case 'Delete':
-          setSettings({ toggleRuler: !settings.toggleRuler })
+          setSettings({ showRuler: !settings.showRuler })
           return
         default:
           return
@@ -115,7 +115,7 @@ export const Draggable: FC<Props> = ({ state, setters, children }) => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [isFocused, setSettings, setUI, settings.toggleRuler, ui.left, ui.top])
+  }, [isFocused, setSettings, setUI, settings.showRuler, ui.left, ui.top])
 
   const containerStyle: CSSProperties = useMemo(
     () => ({

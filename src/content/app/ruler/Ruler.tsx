@@ -1,4 +1,4 @@
-import { CSSProperties, FC, useEffect, useMemo, useRef } from 'react'
+import { CSSProperties, FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { RULER_SIZINGS } from '_shared/constants/ui'
 import { combineClassNames } from '_shared/functions/commons'
 import { checkUnitTypeRatioToPx } from '_shared/functions/units'
@@ -15,6 +15,8 @@ export type AppProps = {
 export const Ruler: FC<AppProps> = ({ setters, state }) => {
   const { settings, ui } = state
   const { setUI } = setters
+
+  const [scale, setScale] = useState(window.devicePixelRatio)
 
   const rulerContainerRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -55,7 +57,7 @@ export const Ruler: FC<AppProps> = ({ setters, state }) => {
     }
   }, [setUI, ui.height, ui.width])
 
-  useEffect(() => {
+  const drawRuler = useCallback(() => {
     if (!canvasRef.current) return
     if (!ui.width || !ui.height) return
 
@@ -63,8 +65,9 @@ export const Ruler: FC<AppProps> = ({ setters, state }) => {
     const ctx = canvas.getContext('2d', { alpha: false })
     if (!ctx) return
 
+    ctx.imageSmoothingEnabled = false
     // Handle devicePixelRatio for crisp lines/text.
-    const dpr = window.devicePixelRatio || 1
+    const dpr = scale * 2 || 1
 
     // Set the actual pixel size of the canvas
     canvas.width = ui.width * dpr
@@ -81,13 +84,8 @@ export const Ruler: FC<AppProps> = ({ setters, state }) => {
     ctx.fillStyle = settings.backgroundColor
     ctx.fillRect(0, 0, ui.width, ui.height)
 
-    // Outline with radius
-    // ctx.strokeStyle = settings.color
-    // ctx.lineWidth = 1
-    // ctx.strokeRect(0, 0, ui.width, ui.height)
-
     // Draw the "primary" axis lines
-    const primaryStepPx = Math.round(settings.primaryUnitStep * unitByPx[settings.primaryUnit])
+    const primaryStepPx = settings.primaryUnitStep * unitByPx[settings.primaryUnit]
     ctx.fillStyle = settings.color
     ctx.font = '14px Inter, system-ui, Avenir, Helvetica, Arial, sans-serif'
 
@@ -110,7 +108,7 @@ export const Ruler: FC<AppProps> = ({ setters, state }) => {
 
     // If we show the secondary unit, draw those lines in the same color or slightly distinct
     if (settings.showSecondaryUnit) {
-      const secondaryStepPx = Math.round(settings.secondaryUnitStep * unitByPx[settings.secondaryUnit])
+      const secondaryStepPx = settings.secondaryUnitStep * unitByPx[settings.secondaryUnit]
 
       ctx.beginPath()
       for (let x = RULER_SIZINGS.marginLeft; x <= ui.width; x += secondaryStepPx) {
@@ -131,6 +129,24 @@ export const Ruler: FC<AppProps> = ({ setters, state }) => {
     ctx.translate(0.5, 0.5)
     ctx.translate(-0.5, -0.5)
   }, [
+    scale,
+    settings.backgroundColor,
+    settings.color,
+    settings.primaryUnit,
+    settings.primaryUnitStep,
+    settings.secondaryUnit,
+    settings.secondaryUnitStep,
+    settings.showSecondaryUnit,
+    ui.height,
+    ui.width,
+    unitByPx,
+  ])
+
+  useEffect(() => {
+    if (!canvasRef.current) return
+
+    window.requestAnimationFrame(drawRuler)
+  }, [
     ui.width,
     ui.height,
     settings.color,
@@ -141,17 +157,30 @@ export const Ruler: FC<AppProps> = ({ setters, state }) => {
     settings.secondaryUnitStep,
     settings.showSecondaryUnit,
     unitByPx,
+    scale,
+    drawRuler,
   ])
 
-  // Same style for the container as before (minus the background references).
   const rulerStyle: CSSProperties = useMemo(() => {
     return {
       width: ui.width,
       height: ui.height,
-      // background: 'transparent',
       outlineColor: settings.color,
+      // scale: 1 / scale,
     }
   }, [settings.color, ui.height, ui.width])
+
+  useEffect(() => {
+    const resizeHandler = () => {
+      console.log({ 'window.devicePixelRatio': window.devicePixelRatio })
+      setScale(window.devicePixelRatio)
+    }
+    window.addEventListener('resize', resizeHandler)
+
+    return () => {
+      window.removeEventListener('resize', resizeHandler)
+    }
+  }, [])
 
   return (
     <Draggable state={state} setters={setters}>

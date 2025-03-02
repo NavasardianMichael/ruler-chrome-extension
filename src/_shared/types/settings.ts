@@ -13,7 +13,7 @@ export type BinaryFieldName = (typeof BINARY_FIELD_NAMES)[number]
 export type SettingsState = Record<UnitTypeFieldName, UnitType> &
   Record<UnitStepFieldName, number> &
   Record<ColorFieldName, string> & {
-    toggleRuler: boolean
+    showRuler: boolean
     showSecondaryUnit: boolean
     rotationDegree: number
   }

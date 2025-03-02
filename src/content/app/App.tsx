@@ -50,10 +50,8 @@ export const App = () => {
 
   useEffect(() => {
     const onKeyPress = (event: KeyboardEvent) => {
-      console.log({ event })
-
       if (!event.ctrlKey || event.key.toLowerCase() !== 'q') return
-      setters.setSettings({ toggleRuler: !settings.toggleRuler })
+      setters.setSettings({ showRuler: !settings.showRuler })
     }
 
     document.addEventListener('keyup', onKeyPress)
@@ -61,11 +59,9 @@ export const App = () => {
     return () => {
       document.removeEventListener('keyup', onKeyPress)
     }
-  }, [setSettings, setters, settings.toggleRuler, state.settings.toggleRuler])
+  }, [setSettings, setters, settings.showRuler, state.settings.showRuler])
 
-  console.log(settings.toggleRuler)
-
-  if (!settings.toggleRuler || !isSyncedWithChromeStorage) return null
+  if (!settings.showRuler || !isSyncedWithChromeStorage) return null
 
   return <Ruler state={state} setters={setters} />
 }

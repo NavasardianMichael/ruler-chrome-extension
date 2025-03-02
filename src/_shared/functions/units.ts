@@ -1,7 +1,7 @@
 import { UnitType } from "_shared/types/settings"
 
 export const checkUnitTypeRatioToPx = (unitType: UnitType): number => {
-    const precisionFactor = 1
+    const precisionFactor = 10
     const tempElement = document.createElement('div')
     tempElement.style.width = `${precisionFactor}${unitType}`
     document.body.appendChild(tempElement)

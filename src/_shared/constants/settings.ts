@@ -90,7 +90,6 @@ export const REST_FIELD_NAMES = {
 export const BINARY_FIELD_NAMES = [REST_FIELD_NAMES.showRuler, REST_FIELD_NAMES.showSecondaryUnit] as const
 
 export const SETTINGS_FORM_INITIAL_VALUES: SettingsState = {
-  showRuler: true,
   primaryUnit: UNIT_TYPES.cm,
   showSecondaryUnit: true,
   secondaryUnit: UNIT_TYPES.mm,

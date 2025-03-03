@@ -4,7 +4,7 @@ import { combineClassNames } from '_shared/functions/commons'
 import { SettingsCommonProps } from '../Settings'
 import styles from '../settings.module.css'
 
-export const Toggle: FC<SettingsCommonProps> = ({ handleInputChange, settings }) => {
+export const Toggle: FC<SettingsCommonProps> = ({ handleSessionInputChange, session }) => {
   return (
     <div className={combineClassNames(styles.flex, styles.spaceSM)}>
       <label htmlFor={REST_FIELDS_TEMPLATES.showRuler.name}>{REST_FIELDS_TEMPLATES.showRuler.label} (ctrl + Q)</label>
@@ -13,8 +13,8 @@ export const Toggle: FC<SettingsCommonProps> = ({ handleInputChange, settings })
           type="checkbox"
           id={REST_FIELD_NAMES.showRuler}
           name={REST_FIELD_NAMES.showRuler}
-          onChange={handleInputChange}
-          checked={settings.showRuler}
+          onChange={handleSessionInputChange}
+          checked={session.showRuler}
         />
         <span className={styles.slider}></span>
       </div>

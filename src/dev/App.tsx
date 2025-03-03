@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
+import { SESSION_INITIAL_VALUES } from '_shared/constants/session'
 import { SETTINGS_FORM_INITIAL_VALUES } from '_shared/constants/settings'
 import { UI_INITIAL_VALUES } from '_shared/constants/ui'
 import { Ruler } from 'content/app/ruler/Ruler'
+import { SessionState } from '_shared/types/session'
 import { SettingsState } from '_shared/types/settings'
 import { UIState } from '_shared/types/ui'
 
@@ -13,6 +15,7 @@ export type Setters = {
 export const App = () => {
   const [settings, setSettings] = useState(SETTINGS_FORM_INITIAL_VALUES)
   const [ui, setUI] = useState(UI_INITIAL_VALUES)
+  const [session, setSession] = useState(SESSION_INITIAL_VALUES)
 
   const setters = useMemo(() => {
     return {
@@ -22,17 +25,20 @@ export const App = () => {
       setUI: (newUI: Partial<UIState>) => {
         return setUI((prev) => ({ ...prev, ...newUI }))
       },
+      setSession: (newSession: Partial<SessionState>) => {
+        return setSession((prev) => ({ ...prev, ...newSession }))
+      },
     }
   }, [])
 
   const state = useMemo(() => {
-    return { settings, ui }
-  }, [settings, ui])
+    return { settings, ui, session }
+  }, [session, settings, ui])
 
   useEffect(() => {
     const onKeyPress = (event: KeyboardEvent) => {
       if (!event.ctrlKey || event.key.toLowerCase() !== 'q') return
-      setters.setSettings({ showRuler: !settings.showRuler })
+      setters.setSession({ showRuler: !session.showRuler })
     }
 
     document.addEventListener('keyup', onKeyPress)
@@ -40,9 +46,9 @@ export const App = () => {
     return () => {
       document.removeEventListener('keyup', onKeyPress)
     }
-  }, [setSettings, setters, settings.showRuler, state.settings.showRuler])
+  }, [session.showRuler, setSettings, setters, state.session.showRuler])
 
-  if (!settings.showRuler) return null
+  if (!session.showRuler) return null
 
   return <Ruler state={state} setters={setters} />
 }

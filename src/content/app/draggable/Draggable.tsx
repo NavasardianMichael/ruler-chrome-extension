@@ -23,8 +23,8 @@ type Props = {
 const RESIZE_HANDLE_SIZE = 16
 
 export const Draggable: FC<Props> = ({ state, setters, children }) => {
-  const { settings, ui } = state
-  const { setSettings, setUI } = setters
+  const { settings, ui, session } = state
+  const { setSettings, setUI, setSession } = setters
 
   const [isDragging, setIsDragging] = useState(false)
   const [isFocused, setIsFocused] = useState(false)
@@ -99,7 +99,7 @@ export const Draggable: FC<Props> = ({ state, setters, children }) => {
           state.left += 1
           break
         case 'Delete':
-          setSettings({ showRuler: !settings.showRuler })
+          setSession({ showRuler: !session.showRuler })
           return
         default:
           return
@@ -115,7 +115,7 @@ export const Draggable: FC<Props> = ({ state, setters, children }) => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [isFocused, setSettings, setUI, settings.showRuler, ui.left, ui.top])
+  }, [isFocused, session.showRuler, setSession, setSettings, setUI, ui.left, ui.top])
 
   const containerStyle: CSSProperties = useMemo(
     () => ({

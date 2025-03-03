@@ -1,7 +1,7 @@
-import { SettingsState } from "./settings"
-import { UIState } from "./ui"
+import { SettingsState } from './settings'
+import { UIState } from './ui'
 
 export type State = {
-    settings: SettingsState
-    ui: UIState
-} 
+  settings: SettingsState
+  ui: UIState
+}

@@ -2,13 +2,14 @@ import { CSSProperties, FC, useCallback, useEffect, useMemo, useRef, useState } 
 import { RULER_SIZINGS } from '_shared/constants/ui'
 import { combineClassNames } from '_shared/functions/commons'
 import { checkUnitTypeRatioToPx } from '_shared/functions/units'
+import { SessionState } from '_shared/types/session'
 import { State } from '_shared/types/state'
 import { Setters } from '../App'
 import { Draggable } from '../draggable/Draggable'
 import styles from './ruler.module.css'
 
 export type AppProps = {
-  state: State
+  state: State & { session: SessionState }
   setters: Setters
 }
 

@@ -25,7 +25,7 @@ const manifest: ManifestV3Export = {
     default_icon: 'src/_shared/icons/ruler.png',
     default_title: 'Ruler Extension',
   },
-  permissions: ['storage'],
+  permissions: ['storage', 'sessions'],
 }
 
 export default manifest

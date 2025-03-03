@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { SETTINGS_FORM_INITIAL_VALUES } from '_shared/constants/settings'
 import { UI_INITIAL_VALUES } from '_shared/constants/ui'
-import { setStorageValue } from '_shared/functions/chromeStorage'
+import { setChromeLocalStorageValue } from '_shared/functions/chromeStorage'
 import { SettingsState } from '_shared/types/settings'
 import { UIState } from '_shared/types/ui'
 import { Ruler } from './ruler/Ruler'
@@ -25,7 +25,7 @@ export const App = () => {
             ...prev,
             ...newSettings,
           }
-          setStorageValue({ settings: newState })
+          setChromeLocalStorageValue({ settings: newState })
           return newState
         })
       },
@@ -35,7 +35,7 @@ export const App = () => {
             ...prev,
             ...newUI,
           }
-          setStorageValue({ ui: newState })
+          setChromeLocalStorageValue({ ui: newState })
           return newState
         })
       },

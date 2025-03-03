@@ -1,4 +1,4 @@
-export const getStorageValue = <T>(key: string): Promise<T> => {
+export const getChromeLocalStorageValue = <T>(key: string): Promise<T> => {
   return new Promise((resolve) => {
     chrome.storage.local.get([key], (result) => {
       resolve(result[key])
@@ -6,7 +6,7 @@ export const getStorageValue = <T>(key: string): Promise<T> => {
   })
 }
 
-export const setStorageValue = async <T>(newValue: T) => {
+export const setChromeLocalStorageValue = async <T>(newValue: T) => {
   if (!chrome.storage?.local) {
     console.warn(`chrome.storage.local is not found to set Value in storage`)
     return

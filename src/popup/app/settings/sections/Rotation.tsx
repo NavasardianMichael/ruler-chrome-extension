@@ -4,7 +4,7 @@ import { combineClassNames } from '_shared/functions/commons'
 import { SettingsCommonProps } from '../Settings'
 import styles from '../settings.module.css'
 
-export const Rotation: FC<SettingsCommonProps> = ({ handleInputChange, settings }) => {
+export const Rotation: FC<SettingsCommonProps> = ({ handleInputChange, handleInputBlur, settings }) => {
   return (
     <div className={combineClassNames(styles.flex, styles.column, styles.spaceSM)}>
       <label htmlFor={REST_FIELDS_TEMPLATES.rotationDegree.name}>
@@ -27,6 +27,7 @@ export const Rotation: FC<SettingsCommonProps> = ({ handleInputChange, settings 
           name={REST_FIELDS_TEMPLATES.rotationDegree.name}
           value={settings.rotationDegree}
           onChange={handleInputChange}
+          onBlur={handleInputBlur}
           min={ROTATION_DEGREE_PROPS.minStep}
           max={ROTATION_DEGREE_PROPS.maxStep}
         />

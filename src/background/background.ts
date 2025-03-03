@@ -1,9 +1,9 @@
 import { SETTINGS_FORM_INITIAL_VALUES } from '_shared/constants/settings'
 import { UI_INITIAL_VALUES } from '_shared/constants/ui'
-import { setStorageValue } from '_shared/functions/chromeStorage'
+import { setChromeLocalStorageValue } from '_shared/functions/chromeStorage'
 
 chrome.runtime.onInstalled.addListener(() => {
-  setStorageValue({
+  setChromeLocalStorageValue({
     settings: SETTINGS_FORM_INITIAL_VALUES,
     ui: UI_INITIAL_VALUES,
   })

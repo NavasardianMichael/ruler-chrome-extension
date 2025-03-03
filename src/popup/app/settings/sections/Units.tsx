@@ -11,7 +11,12 @@ import { combineClassNames } from '_shared/functions/commons'
 import { SettingsCommonProps } from '../Settings'
 import styles from '../settings.module.css'
 
-export const Units: FC<SettingsCommonProps> = ({ handleInputChange, handleUnitTypeChange, settings }) => {
+export const Units: FC<SettingsCommonProps> = ({
+  handleInputChange,
+  handleUnitTypeChange,
+  handleInputBlur,
+  settings,
+}) => {
   return (
     <>
       {UNIT_TYPES_SELECTIONS_TEMPLATES.map((unitTypeTemplate) => {
@@ -65,6 +70,7 @@ export const Units: FC<SettingsCommonProps> = ({ handleInputChange, handleUnitTy
                       name={unitTypeTemplate.unitStep.fieldName}
                       value={settings[unitTypeTemplate.unitStep.fieldName]}
                       onChange={handleInputChange}
+                      onBlur={handleInputBlur}
                       min={UNITS_TYPES_PROPS.byType[settings[fieldName]].minStep}
                       max={UNITS_TYPES_PROPS.byType[settings[fieldName]].maxStep}
                     />
@@ -74,6 +80,7 @@ export const Units: FC<SettingsCommonProps> = ({ handleInputChange, handleUnitTy
                       name={unitTypeTemplate.unitStep.fieldName}
                       value={settings[unitTypeTemplate.unitStep.fieldName]}
                       onChange={handleInputChange}
+                      onBlur={handleInputBlur}
                       min={UNITS_TYPES_PROPS.byType[settings[fieldName]].minStep}
                       max={UNITS_TYPES_PROPS.byType[settings[fieldName]].maxStep}
                     />

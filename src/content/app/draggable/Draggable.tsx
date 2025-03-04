@@ -1,4 +1,5 @@
 import { CSSProperties, FC, MouseEvent, ReactNode, useEffect, useMemo, useRef, useState } from 'react'
+import { checkUnitTypeRatioToPx } from '_shared/functions/units'
 import { UIState } from '_shared/types/ui'
 import { AppProps } from '../ruler/Ruler'
 import styles from './draggable.module.css'
@@ -117,13 +118,20 @@ export const Draggable: FC<Props> = ({ state, setters, children }) => {
     }
   }, [isFocused, setSettings, setUI, settings.showRuler, ui.left, ui.top])
 
+  const scale = useMemo(() => {
+    if (!settings.primaryUnit) console.warn('primaryUnit missing')
+
+    return 1 - 1 / checkUnitTypeRatioToPx(settings.primaryUnit)
+  }, [settings.primaryUnit])
+
   const containerStyle: CSSProperties = useMemo(
     () => ({
       left: ui.left,
       top: ui.top,
       transform: `rotate(${settings.rotationDegree}deg)`,
+      scale,
     }),
-    [settings.rotationDegree, ui.left, ui.top]
+    [scale, settings.rotationDegree, ui.left, ui.top]
   )
 
   const handleFocus = () => setIsFocused(true)

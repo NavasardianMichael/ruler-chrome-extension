@@ -22,8 +22,9 @@ export const Precision: FC<SettingsCommonProps> = ({ handleInputChange, handleIn
           </div>
         </div>
         <p className={styles.hint}>
-          * Browser may have misinterpreting correct physical measurements, turn "Precise Mode" on to guarantee
-          measurements
+          * Browser may misinterpret correct physical measurements,
+          <br />
+          turn "Precise Mode" on to guarantee precise measurements
         </p>
       </div>
       {settings.isPreciseMode && (

@@ -9,7 +9,11 @@
   padding: var(--ruler-extension-css-vars-space-sm) var(--ruler-extension-css-vars-space-lg)
     var(--ruler-extension-css-vars-space-lg) var(--ruler-extension-css-vars-space-lg);
   user-select: none;
-  gap: var(--ruler-extension-css-vars-space-lg);
+  gap: var(--ruler-extension-css-vars-space-md);
+
+  hr {
+    width: 100%;
+  }
 
   & label {
     font-weight: bold;

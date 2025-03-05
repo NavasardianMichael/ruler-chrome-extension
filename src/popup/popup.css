@@ -5,7 +5,7 @@ body {
 }
 
 #popup-root {
-  min-width: 340px;
+  min-width: 390px;
   display: flex;
   flex-direction: column;
   gap: var(--ruler-extension-css-vars-space-lg);

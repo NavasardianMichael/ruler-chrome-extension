@@ -190,6 +190,6 @@ export const PRECISION_FIELDS_TEMPLATES = {
   },
   deviceDiagonal: {
     name: PRECISION_FIELD_NAMES.deviceDiagonal,
-    label: 'Fill your Device Diagonal in inches',
+    label: 'Fill Diagonal of your Display in inches',
   },
 }

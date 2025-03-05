@@ -104,16 +104,25 @@ export const Settings = () => {
   const handleInputBlur: FocusEventHandler<HTMLInputElement> = useCallback((event) => {
     const { value, min, max } = event.target
     const name = event.target.name as UnitStepFieldName
-    if (value !== '') return
+    console.log({ name, value })
 
     setSettings((prev) => {
-      const newState = prev
+      let newState = prev
       if (value === '') {
-        newState[name] = SETTINGS_FORM_INITIAL_VALUES[name]
+        newState = {
+          ...newState,
+          [name]: SETTINGS_FORM_INITIAL_VALUES[name],
+        }
       } else if (+value < +min) {
-        newState[name as UnitStepFieldName] = +min
+        newState = {
+          ...newState,
+          [name]: +min,
+        }
       } else if (+value > +max) {
-        newState[name as UnitStepFieldName] = +max
+        newState = {
+          ...newState,
+          [name]: +max,
+        }
       }
 
       setChromeLocalStorageValue({ settings: newState })
@@ -143,10 +152,15 @@ export const Settings = () => {
   return (
     <main className={styles.settings}>
       <Toggle {...commonsProps} />
+      <hr />
       <Precision {...commonsProps} />
+      <hr />
       <Units {...commonsProps} />
+      <hr />
       <Rotation {...commonsProps} />
+      <hr />
       <Colors {...commonsProps} />
+      <hr />
       <button className={styles.resetBtn} onClick={handleResetSettingsClick}>
         Reset Settings
       </button>

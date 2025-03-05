@@ -9,7 +9,7 @@ export const Colors: FC<SettingsCommonProps> = ({ handleInputChange, settings })
     <>
       {COLORS_SELECTIONS_TEMPLATES.map((colorTemplate) => {
         return (
-          <div className={combineClassNames(styles.flex, styles.column, styles.spaceSM)}>
+          <div className={combineClassNames(styles.flex, styles.spaceSM)}>
             <label htmlFor={colorTemplate.name}>{colorTemplate.label}</label>
             <input
               type="color"

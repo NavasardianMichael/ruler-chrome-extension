@@ -78,7 +78,7 @@ export const Settings = () => {
 
   const handleInputChange: ChangeEventHandler<HTMLInputElement> = useCallback(
     (event) => {
-      const { name, value, min, max } = event.target
+      const { name, value } = event.target
 
       setSettings((prev) => {
         const newState = {
@@ -94,11 +94,6 @@ export const Settings = () => {
           if (randomUnit) newState.secondaryUnit = randomUnit.value
         }
 
-        if (!isNaN(+min) && !isNaN(+max)) {
-          if (+value < +min) newState[name as UnitStepFieldName] = +min
-          if (+value > +max) newState[name as UnitStepFieldName] = +max
-        }
-
         setChromeLocalStorageValue({ settings: newState })
         return newState
       })
@@ -107,14 +102,20 @@ export const Settings = () => {
   )
 
   const handleInputBlur: FocusEventHandler<HTMLInputElement> = useCallback((event) => {
-    if (event.target.value !== '') return
-    const name = event.target.name as UnitTypeFieldName
+    const { value, min, max } = event.target
+    const name = event.target.name as UnitStepFieldName
+    if (value !== '') return
 
     setSettings((prev) => {
-      const newState = {
-        ...prev,
-        [name]: SETTINGS_FORM_INITIAL_VALUES[name],
+      const newState = prev
+      if (value === '') {
+        newState[name] = SETTINGS_FORM_INITIAL_VALUES[name]
+      } else if (+value < +min) {
+        newState[name as UnitStepFieldName] = +min
+      } else if (+value > +max) {
+        newState[name as UnitStepFieldName] = +max
       }
+
       setChromeLocalStorageValue({ settings: newState })
       return newState
     })

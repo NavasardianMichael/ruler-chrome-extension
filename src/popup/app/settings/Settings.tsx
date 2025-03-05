@@ -16,8 +16,9 @@ import {
   UNIT_TYPE_SELECTION_TEMPLATE,
 } from '_shared/constants/settings'
 import { UI_INITIAL_VALUES } from '_shared/constants/ui'
-import { getChromeLocalStorageValue, setChromeLocalStorageValue } from '_shared/functions/chromeStorage'
+import { setChromeLocalStorageValue } from '_shared/functions/chromeStorage'
 import { BinaryFieldName, SettingsState, UnitStepFieldName, UnitType, UnitTypeFieldName } from '_shared/types/settings'
+import { State } from '_shared/types/state'
 import { Colors } from './sections/Colors'
 import { Rotation } from './sections/Rotation'
 import { Toggle } from './sections/Toggle'
@@ -36,12 +37,18 @@ export const Settings = () => {
   const [isSyncedWithChromeStorage, setIsSyncedWithChromeStorage] = useState(false)
 
   useEffect(() => {
-    const syncChromeStorageToLocalState = async () => {
-      const settingsFromStorage = await getChromeLocalStorageValue<SettingsState>('settings')
-      setSettings({ ...SETTINGS_FORM_INITIAL_VALUES, ...settingsFromStorage })
+    const initialSyncWithStorage = async () => {
+      const state: State = await chrome.storage.local.get()
+      const { settings: settingsFromStorage, ui: uiFromStorage } = state
+      if (!settingsFromStorage && !uiFromStorage) {
+        await setChromeLocalStorageValue({ settings: SETTINGS_FORM_INITIAL_VALUES, ui: UI_INITIAL_VALUES })
+      } else {
+        setSettings({ ...SETTINGS_FORM_INITIAL_VALUES, ...settingsFromStorage })
+      }
       setIsSyncedWithChromeStorage(true)
     }
-    syncChromeStorageToLocalState()
+
+    initialSyncWithStorage()
   }, [])
 
   const handleUnitTypeChange: ChangeEventHandler<HTMLSelectElement> = useCallback((event) => {

@@ -8,8 +8,8 @@ import { Ruler } from './ruler/Ruler'
 import { useSyncWithChromeStorage } from './useSyncWithChromeStorage'
 
 export type Setters = {
-  setSettings: (newSettings: Partial<SettingsState>) => void
-  setUI: (newUI: Partial<UIState>) => void
+  setSettings: (newSettings: Partial<SettingsState>, applyOnLocalStateOnly?: boolean) => void
+  setUI: (newUI: Partial<UIState>, applyOnLocalStateOnly?: boolean) => void
 }
 
 export const App = () => {
@@ -17,27 +17,29 @@ export const App = () => {
   const [ui, setUI] = useState(UI_INITIAL_VALUES)
   const [isSyncedWithChromeStorage, setIsSyncedWithChromeStorage] = useState(false)
 
-  const setters = useMemo(() => {
+  const setters: Setters = useMemo(() => {
     return {
-      setSettings: (newSettings: Partial<SettingsState>) => {
+      setSettings: (newSettings, applyOnLocalStateOnly = false) => {
+        let newState = {} as SettingsState
         setSettings((prev) => {
-          const newState: SettingsState = {
+          newState = {
             ...prev,
             ...newSettings,
           }
-          setChromeLocalStorageValue({ settings: newState })
           return newState
         })
+        if (!applyOnLocalStateOnly) setChromeLocalStorageValue({ settings: newState })
       },
-      setUI: (newUI: Partial<UIState>) => {
+      setUI: (newUI, applyOnLocalStateOnly = false) => {
+        let newState = {} as UIState
         setUI((prev) => {
-          const newState: UIState = {
+          newState = {
             ...prev,
             ...newUI,
           }
-          setChromeLocalStorageValue({ ui: newState })
           return newState
         })
+        if (!applyOnLocalStateOnly) setChromeLocalStorageValue({ ui: newState })
       },
     }
   }, [])
@@ -51,7 +53,7 @@ export const App = () => {
   useEffect(() => {
     const onKeyPress = (event: KeyboardEvent) => {
       if (!event.ctrlKey || event.key.toLowerCase() !== 'q') return
-      setters.setSettings({ showRuler: !settings.showRuler })
+      setters.setSettings({ showRuler: !state.settings.showRuler })
     }
 
     document.addEventListener('keyup', onKeyPress)
@@ -59,7 +61,7 @@ export const App = () => {
     return () => {
       document.removeEventListener('keyup', onKeyPress)
     }
-  }, [setSettings, setters, settings.showRuler, state.settings.showRuler])
+  }, [setters.setSettings, state.settings.showRuler])
 
   if (!settings.showRuler || !isSyncedWithChromeStorage) return null
 

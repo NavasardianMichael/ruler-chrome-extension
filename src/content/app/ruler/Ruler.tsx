@@ -36,17 +36,17 @@ export const Ruler: FC<AppProps> = ({ setters, state }) => {
     if (!ui.height || !ui.width || !rulerContainerRef.current) return
 
     const observer = new ResizeObserver((entries) => {
+      console.log('observer called')
+
       for (const entry of entries) {
         const { width, height } = entry.contentRect
         if (!width || !height) return
 
-        setTimeout(() => {
-          if (Math.floor(width) === ui.width && Math.floor(height) === ui.height) return
-          setUI({
-            height: Math.floor(height),
-            width: Math.floor(width),
-          })
-        }, 1)
+        if (Math.floor(width) === ui.width && Math.floor(height) === ui.height) return
+        setUI({
+          height: Math.floor(height),
+          width: Math.floor(width),
+        })
       }
     })
 

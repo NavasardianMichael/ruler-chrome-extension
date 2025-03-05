@@ -32,7 +32,7 @@ export const App = () => {
   useEffect(() => {
     const onKeyPress = (event: KeyboardEvent) => {
       if (!event.ctrlKey || event.key.toLowerCase() !== 'q') return
-      setters.setSettings({ showRuler: !settings.showRuler })
+      setters.setSettings({ showRuler: !state.settings.showRuler })
     }
 
     document.addEventListener('keyup', onKeyPress)
@@ -40,7 +40,7 @@ export const App = () => {
     return () => {
       document.removeEventListener('keyup', onKeyPress)
     }
-  }, [setSettings, setters, settings.showRuler, state.settings.showRuler])
+  }, [setters.setSettings, state.settings.showRuler])
 
   if (!settings.showRuler) return null
 

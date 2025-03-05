@@ -20,6 +20,7 @@ import { setChromeLocalStorageValue } from '_shared/functions/chromeStorage'
 import { BinaryFieldName, SettingsState, UnitStepFieldName, UnitType, UnitTypeFieldName } from '_shared/types/settings'
 import { State } from '_shared/types/state'
 import { Colors } from './sections/Colors'
+import { Precision } from './sections/Precision'
 import { Rotation } from './sections/Rotation'
 import { Toggle } from './sections/Toggle'
 import { Units } from './sections/Units'
@@ -40,7 +41,12 @@ export const Settings = () => {
     const initialSyncWithStorage = async () => {
       const state: State = await chrome.storage.local.get()
       const { settings: settingsFromStorage, ui: uiFromStorage } = state
-      if (!settingsFromStorage && !uiFromStorage) {
+      if (
+        !settingsFromStorage ||
+        !uiFromStorage ||
+        Object.keys(settingsFromStorage)?.length === 0 ||
+        Object.keys(uiFromStorage)?.length === 0
+      ) {
         await setChromeLocalStorageValue({ settings: SETTINGS_FORM_INITIAL_VALUES, ui: UI_INITIAL_VALUES })
       } else {
         setSettings({ ...SETTINGS_FORM_INITIAL_VALUES, ...settingsFromStorage })
@@ -103,7 +109,6 @@ export const Settings = () => {
   const handleInputBlur: FocusEventHandler<HTMLInputElement> = useCallback((event) => {
     if (event.target.value !== '') return
     const name = event.target.name as UnitTypeFieldName
-    console.log({ smth: SETTINGS_FORM_INITIAL_VALUES[name], name })
 
     setSettings((prev) => {
       const newState = {
@@ -137,6 +142,7 @@ export const Settings = () => {
   return (
     <main className={styles.settings}>
       <Toggle {...commonsProps} />
+      <Precision {...commonsProps} />
       <Units {...commonsProps} />
       <Rotation {...commonsProps} />
       <Colors {...commonsProps} />

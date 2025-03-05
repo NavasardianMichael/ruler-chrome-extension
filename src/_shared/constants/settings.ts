@@ -57,9 +57,30 @@ export const MIN_STEPS_NUMBERS_TO_PAINT: Record<UnitType, number> = {
   px: 36,
 }
 
+export const PX_BY_UNITS = {
+  mm: 96 / 25.4, // ≈ 3.7795 px per mm
+  cm: 96 / 2.54, // ≈ 37.7953 px per cm
+  in: 96, // 96 px per inch
+  pt: 96 / 72, // ≈ 1.3333 px per point
+  px: 1,
+}
+
+export const INCHES_BY_UNIT = {
+  mm: 1 / 25.4,
+  cm: 1 / 2.54,
+  in: 1,
+  pt: 1 / 72,
+  px: 1 / 96,
+}
+
 export const ROTATION_DEGREE_PROPS = {
   minStep: 0,
   maxStep: 360,
+}
+
+export const PRECISION_PROPS = {
+  minStep: 8,
+  maxStep: 96,
 }
 
 export const UNIT_TYPE_SELECTION_TEMPLATE = UNITS_TYPES_PROPS.allTypes.map(
@@ -87,10 +108,22 @@ export const REST_FIELD_NAMES = {
   rotationDegree: 'rotationDegree',
 } as const
 
-export const BINARY_FIELD_NAMES = [REST_FIELD_NAMES.showRuler, REST_FIELD_NAMES.showSecondaryUnit] as const
+export const PRECISION_FIELD_NAMES = {
+  isPreciseMode: 'isPreciseMode',
+  deviceDiagonal: 'deviceDiagonal',
+} as const
+
+export const BINARY_FIELD_NAMES = [
+  PRECISION_FIELD_NAMES.isPreciseMode,
+  REST_FIELD_NAMES.showRuler,
+  REST_FIELD_NAMES.showSecondaryUnit,
+] as const
 
 export const SETTINGS_FORM_INITIAL_VALUES: SettingsState = {
   showRuler: true,
+  isPreciseMode: false,
+  // Dell P2419h
+  deviceDiagonal: 23.8,
   primaryUnit: UNIT_TYPES.cm,
   showSecondaryUnit: true,
   secondaryUnit: UNIT_TYPES.mm,
@@ -147,5 +180,16 @@ export const REST_FIELDS_TEMPLATES = {
   rotationDegree: {
     name: REST_FIELD_NAMES.rotationDegree,
     label: 'Choose Rotation Degree',
+  },
+}
+
+export const PRECISION_FIELDS_TEMPLATES = {
+  isPreciseMode: {
+    name: PRECISION_FIELD_NAMES.isPreciseMode,
+    label: 'Turn on/off Precise Mode',
+  },
+  deviceDiagonal: {
+    name: PRECISION_FIELD_NAMES.deviceDiagonal,
+    label: 'Fill your Device Diagonal in inches',
   },
 }

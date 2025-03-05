@@ -20,26 +20,24 @@ export const App = () => {
   const setters: Setters = useMemo(() => {
     return {
       setSettings: (newSettings, applyOnLocalStateOnly = false) => {
-        let newState = {} as SettingsState
         setSettings((prev) => {
-          newState = {
+          const newState = {
             ...prev,
             ...newSettings,
           }
+          if (!applyOnLocalStateOnly) setChromeLocalStorageValue({ settings: newState })
           return newState
         })
-        if (!applyOnLocalStateOnly) setChromeLocalStorageValue({ settings: newState })
       },
       setUI: (newUI, applyOnLocalStateOnly = false) => {
-        let newState = {} as UIState
         setUI((prev) => {
-          newState = {
+          const newState = {
             ...prev,
             ...newUI,
           }
+          if (!applyOnLocalStateOnly) setChromeLocalStorageValue({ ui: newState })
           return newState
         })
-        if (!applyOnLocalStateOnly) setChromeLocalStorageValue({ ui: newState })
       },
     }
   }, [])
@@ -61,7 +59,7 @@ export const App = () => {
     return () => {
       document.removeEventListener('keyup', onKeyPress)
     }
-  }, [setters.setSettings, state.settings.showRuler])
+  }, [setters, setters.setSettings, state.settings.showRuler])
 
   if (!settings.showRuler || !isSyncedWithChromeStorage) return null
 

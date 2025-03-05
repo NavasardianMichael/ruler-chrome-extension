@@ -40,7 +40,7 @@ export const App = () => {
     return () => {
       document.removeEventListener('keyup', onKeyPress)
     }
-  }, [setters.setSettings, state.settings.showRuler])
+  }, [setters, setters.setSettings, state.settings.showRuler])
 
   if (!settings.showRuler) return null
 

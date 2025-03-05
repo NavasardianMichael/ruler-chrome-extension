@@ -21,23 +21,21 @@ export const Ruler: FC<AppProps> = ({ setters, state }) => {
   const rulerContainerRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
-  const unitByPx = useMemo(
-    () => ({
-      mm: checkUnitTypeRatioToPx('mm'),
-      cm: checkUnitTypeRatioToPx('cm'),
-      in: checkUnitTypeRatioToPx('in'),
-      pt: checkUnitTypeRatioToPx('pt'),
+  const unitByPx = useMemo(() => {
+    const preDefinedPPI = settings.isPreciseMode ? settings.deviceDiagonal : undefined
+    return {
+      mm: checkUnitTypeRatioToPx('mm', scale, preDefinedPPI),
+      cm: checkUnitTypeRatioToPx('cm', scale, preDefinedPPI),
+      in: checkUnitTypeRatioToPx('in', scale, preDefinedPPI),
+      pt: checkUnitTypeRatioToPx('pt', scale, preDefinedPPI),
       px: 1,
-    }),
-    []
-  )
+    }
+  }, [settings.deviceDiagonal, settings.isPreciseMode, scale])
 
   useEffect(() => {
     if (!ui.height || !ui.width || !rulerContainerRef.current) return
 
     const observer = new ResizeObserver((entries) => {
-      console.log('observer called')
-
       for (const entry of entries) {
         const { width, height } = entry.contentRect
         if (!width || !height) return
@@ -146,20 +144,7 @@ export const Ruler: FC<AppProps> = ({ setters, state }) => {
     if (!canvasRef.current) return
 
     window.requestAnimationFrame(drawRuler)
-  }, [
-    ui.width,
-    ui.height,
-    settings.color,
-    settings.backgroundColor,
-    settings.primaryUnit,
-    settings.primaryUnitStep,
-    settings.secondaryUnit,
-    settings.secondaryUnitStep,
-    settings.showSecondaryUnit,
-    unitByPx,
-    scale,
-    drawRuler,
-  ])
+  }, [drawRuler])
 
   const rulerStyle: CSSProperties = useMemo(() => {
     return {
@@ -172,7 +157,6 @@ export const Ruler: FC<AppProps> = ({ setters, state }) => {
 
   useEffect(() => {
     const resizeHandler = () => {
-      console.log({ 'window.devicePixelRatio': window.devicePixelRatio })
       setScale(window.devicePixelRatio)
     }
     window.addEventListener('resize', resizeHandler)

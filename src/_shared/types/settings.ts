@@ -1,4 +1,10 @@
-import { BINARY_FIELD_NAMES, COLOR_FIELD_NAMES, UNIT_STEP_FIELD_NAMES, UNIT_TYPES, UNIT_TYPE_FIELD_NAMES } from '_shared/constants/settings'
+import {
+  BINARY_FIELD_NAMES,
+  COLOR_FIELD_NAMES,
+  UNIT_STEP_FIELD_NAMES,
+  UNIT_TYPES,
+  UNIT_TYPE_FIELD_NAMES,
+} from '_shared/constants/settings'
 
 export type UnitType = (typeof UNIT_TYPES)[keyof typeof UNIT_TYPES]
 
@@ -16,4 +22,6 @@ export type SettingsState = Record<UnitTypeFieldName, UnitType> &
     showRuler: boolean
     showSecondaryUnit: boolean
     rotationDegree: number
+    isPreciseMode: boolean
+    deviceDiagonal: number
   }

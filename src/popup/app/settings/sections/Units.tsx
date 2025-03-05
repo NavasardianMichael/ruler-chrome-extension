@@ -27,16 +27,19 @@ export const Units: FC<SettingsCommonProps> = ({
           <Fragment key={fieldName}>
             {isSecondaryField && (
               <div className={combineClassNames(styles.flex, styles.spaceSM)}>
-                <input
-                  type="checkbox"
-                  id={REST_FIELD_NAMES.showSecondaryUnit}
-                  name={REST_FIELD_NAMES.showSecondaryUnit}
-                  onChange={handleInputChange}
-                  checked={settings.showSecondaryUnit}
-                />
                 <label htmlFor={REST_FIELD_NAMES.showSecondaryUnit}>
                   {REST_FIELDS_TEMPLATES.showSecondaryUnit.label}
                 </label>
+                <div className={styles.switch}>
+                  <input
+                    type="checkbox"
+                    id={REST_FIELD_NAMES.showSecondaryUnit}
+                    name={REST_FIELD_NAMES.showSecondaryUnit}
+                    onChange={handleInputChange}
+                    checked={settings.showSecondaryUnit}
+                  />
+                  <span className={styles.slider}></span>
+                </div>
               </div>
             )}
 

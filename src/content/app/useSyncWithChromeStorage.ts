@@ -29,8 +29,6 @@ export const useSyncWithChromeStorage = (
     chrome.storage.onChanged.addListener((changes, areaName) => {
       if (areaName !== 'local') return
       const diff = changes as State
-      console.log({ changes, areaName })
-
       const { settings: settingsUpdateFromStorage } = changes
       if (diff.settings) {
         const { oldValue: oldSettingsInStorage, newValue: newSettingsInStorage } = settingsUpdateFromStorage
@@ -40,8 +38,6 @@ export const useSyncWithChromeStorage = (
       }
 
       // if (diff.ui) {
-      //     console.log({ "diff.ui": diff.ui });
-
       //     const { oldValue: oldUIInStorage, newValue: newUIInStorage } = uiUpdateFromStorage
       //     if (JSON.stringify(oldUIInStorage) !== JSON.stringify(newUIInStorage)) {
       //         setUI(newUIInStorage)

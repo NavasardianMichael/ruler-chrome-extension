@@ -11,6 +11,7 @@ export const setChromeLocalStorageValue = async <T>(newValue: T) => {
     console.warn(`chrome.storage.local is not found to set Value in storage`)
     return
   }
+
   const prev = await chrome.storage.local.get()
   const newState = {
     ...prev,

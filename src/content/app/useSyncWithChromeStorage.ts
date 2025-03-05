@@ -18,8 +18,8 @@ export const useSyncWithChromeStorage = (
       if (!settingsFromStorage && !uiFromStorage) {
         await setChromeLocalStorageValue({ settings: SETTINGS_FORM_INITIAL_VALUES, ui: UI_INITIAL_VALUES })
       } else {
-        setSettings({ ...SETTINGS_FORM_INITIAL_VALUES, ...settingsFromStorage }, true)
-        setUI({ ...UI_INITIAL_VALUES, ...uiFromStorage }, true)
+        setSettings({ ...SETTINGS_FORM_INITIAL_VALUES, ...settingsFromStorage })
+        setUI({ ...UI_INITIAL_VALUES, ...uiFromStorage })
       }
       setIsSyncedWithChromeStorage(true)
     }
@@ -33,7 +33,7 @@ export const useSyncWithChromeStorage = (
       if (diff.settings) {
         const { oldValue: oldSettingsInStorage, newValue: newSettingsInStorage } = settingsUpdateFromStorage
         if (JSON.stringify(oldSettingsInStorage) !== JSON.stringify(newSettingsInStorage)) {
-          setSettings(newSettingsInStorage)
+          setSettings(newSettingsInStorage, true)
         }
       }
 

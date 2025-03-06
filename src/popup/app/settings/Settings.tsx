@@ -104,7 +104,6 @@ export const Settings = () => {
   const handleInputBlur: FocusEventHandler<HTMLInputElement> = useCallback((event) => {
     const { value, min, max } = event.target
     const name = event.target.name as UnitStepFieldName
-    console.log({ name, value })
 
     setSettings((prev) => {
       let newState = prev

@@ -1,4 +1,5 @@
 import { CSSProperties, FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { UNITS_TYPES_PROPS } from '_shared/constants/settings'
 import { RULER_SIZINGS } from '_shared/constants/ui'
 import { combineClassNames } from '_shared/functions/commons'
 import { checkUnitTypeRatioToPx } from '_shared/functions/units'
@@ -56,8 +57,12 @@ export const Ruler: FC<AppProps> = ({ setters, state }) => {
   }, [setUI, ui.height, ui.width])
 
   const drawRuler = useCallback(() => {
-    if (!canvasRef.current) return
-    if (!ui.width || !ui.height) return
+    if (!canvasRef.current || !ui.width || !ui.height) return
+    if (!settings.primaryUnitStep || !settings.secondaryUnitStep) return
+    if (settings.primaryUnitStep > UNITS_TYPES_PROPS.byType[settings.primaryUnit].maxStep) return
+    if (settings.primaryUnitStep < UNITS_TYPES_PROPS.byType[settings.primaryUnit].minStep) return
+    if (settings.secondaryUnitStep > UNITS_TYPES_PROPS.byType[settings.secondaryUnit].maxStep) return
+    if (settings.secondaryUnitStep < UNITS_TYPES_PROPS.byType[settings.secondaryUnit].minStep) return
 
     const canvas = canvasRef.current
     const ctx = canvas.getContext('2d', { alpha: false })
@@ -122,7 +127,7 @@ export const Ruler: FC<AppProps> = ({ setters, state }) => {
     const unitsLabel = settings.showSecondaryUnit
       ? `${settings.primaryUnit} (${settings.secondaryUnit})`
       : settings.primaryUnit
-    ctx.fillText(unitsLabel, RULER_SIZINGS.marginLeft, ui.height - RULER_SIZINGS.unitsInfoOffsetBottom)
+    ctx.fillText(unitsLabel, RULER_SIZINGS.marginLeft - 3, ui.height - RULER_SIZINGS.unitsInfoOffsetBottom)
 
     ctx.translate(0.5, 0.5)
     ctx.translate(-0.5, -0.5)
@@ -151,7 +156,6 @@ export const Ruler: FC<AppProps> = ({ setters, state }) => {
       width: ui.width,
       height: ui.height,
       outlineColor: settings.color,
-      // scale: 1 / scale,
     }
   }, [settings.color, ui.height, ui.width])
 

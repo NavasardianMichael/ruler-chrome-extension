@@ -10,35 +10,35 @@ export const UNIT_TYPES = {
 
 export const UNITS_TYPES_PROPS = {
   byType: {
-    [UNIT_TYPES.mm]: {
+    mm: {
       label: 'Millimeters',
       value: UNIT_TYPES.mm,
       minStep: 1,
       primaryMinStep: 10,
       maxStep: 100,
     },
-    [UNIT_TYPES.cm]: {
+    cm: {
       label: 'Centimeters',
       value: UNIT_TYPES.cm,
       minStep: 1,
       primaryMinStep: 1,
       maxStep: 10,
     },
-    [UNIT_TYPES.in]: {
+    in: {
       label: 'Inches',
       value: UNIT_TYPES.in,
       minStep: 1,
       primaryMinStep: 1,
       maxStep: 10,
     },
-    [UNIT_TYPES.pt]: {
+    pt: {
       label: 'Points',
       value: UNIT_TYPES.pt,
       minStep: 5,
       primaryMinStep: 20,
       maxStep: 500,
     },
-    [UNIT_TYPES.px]: {
+    px: {
       label: 'Pixels',
       value: UNIT_TYPES.px,
       minStep: 5,

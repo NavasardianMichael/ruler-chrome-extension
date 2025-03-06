@@ -113,12 +113,12 @@ export const Settings = () => {
           ...newState,
           [name]: SETTINGS_FORM_INITIAL_VALUES[name],
         }
-      } else if (+value < +min) {
+      } else if (!isNaN(+min) && !isNaN(+max) && +value < +min) {
         newState = {
           ...newState,
           [name]: +min,
         }
-      } else if (+value > +max) {
+      } else if (!isNaN(+min) && !isNaN(+max) && +value > +max) {
         newState = {
           ...newState,
           [name]: +max,

@@ -41,7 +41,7 @@ export const useSyncWithChromeStorage = (
         const { ui: uiUpdateFromStorage } = changes
         const { oldValue: oldUIInStorage, newValue: newUIInStorage } = uiUpdateFromStorage
         if (JSON.stringify(oldUIInStorage) !== JSON.stringify(newUIInStorage)) {
-          setUI(newUIInStorage)
+          setUI(newUIInStorage, true)
         }
       }
     })

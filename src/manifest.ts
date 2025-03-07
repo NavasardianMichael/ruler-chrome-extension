@@ -25,7 +25,7 @@ const manifest: ManifestV3Export = {
     default_icon: 'src/_shared/icons/ruler.png',
     default_title: 'Ruler Extension',
   },
-  permissions: ['activeTab', 'storage'],
+  permissions: ['storage'],
 }
 
 export default manifest
